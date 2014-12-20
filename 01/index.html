@@ -1,0 +1,163 @@
+<!-- vim: foldmethod=marker
+-->
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>はじめてのパターン認識 勉強メモ</title>
+
+		<meta name="description" content="はじめてのパターン認識 1章">
+		<meta name="author" content="2GMon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.min.css">
+		<link rel="stylesheet" href="../css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="../css/2gmon.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+                <section>
+                    <h3>はじめてのパターン認識</h3>
+                    <h3>1章</h3>
+                    <p>
+                    <small>Created by <a href="https://twitter.com/2GMon">2GMon</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h3>話の流れ</h3>
+
+                    <ul>
+                        <li>パターン認識の流れ</li>
+                        <li>パターン認識に用いられる特徴</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>人間は五感を用いてパターン認識を行っているが、感じた情報そのものを用いてパターン認識をしているのではなく、
+                    情報が何かを判断するために有効な特徴を抽出する段階が存在する</p>
+                    <p>識別：「何か」を判断すること</p>
+                    <p>特徴抽出：「有効な特徴」を抽出すること</p>
+                    <p>識別規則：「有効な特徴」と「何か」を結びつける規則</p>
+                    <p>人間はこの識別規則を学習して、パターン認識を行っている</p>
+                </section>
+
+                <section>
+                    <h3>券売機の例</h3>
+                    <p>お金を入れると、真贋と種類を識別する</p>
+                    <p>真贋や種類を判定するには、材質・重さ・大きさなどを測定する必要があり、
+                    このように識別の手がかりとなる特徴量を測定することを特徴抽出という</p>
+                    <p>重さ・大きさ・穴の有無などの抽出された特徴を並べたものを特徴ベクトルといい、
+                    特徴ベクトルを用いて入力されたお金を10円や50円や偽物といったクラスに分類する</p>
+                    <p>分類するための規則を識別規則という</p>
+                </section>
+
+                <section>
+                    <p>識別規則は入力データが所属する正しいクラスを同定するための規則である</p>
+                    <p>識別規則を作るためには、入力データとそのクラスをついにしたたくさんの事例を使って
+                    入力データとクラスとの対応関係を学習する必要がある</p>
+                    <p>このときに用いる事例を学習データと呼ぶ</p>
+                    <p>学習データに含まれない未知のデータについても正しい識別をする必要があり、このような能力を汎化能力という</p>
+                </section>
+
+                <section>
+                    <p>抽出された特徴は、非数値データの定性的特徴と、数値データの定量的特徴に大別される</p>
+                    <p>非数値データは名義尺度と順序尺度に細分され、数値データは比例尺度と間隔尺度に細分される</p>
+                    <ul>
+                        <li>名義尺度：分類のための名前</li>
+                        <li>順序尺度：順序関係を表す。演算はできない</li>
+                        <li>間隔尺度：一定の単位で量られた量。原点は「無」ではない。加減算が意味を持つ</li>
+                        <li>比例尺度：原点が定まっている量。比が意味を持つ</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>定性的な特徴を計算機状で表現するためには符号を用い、2クラスの場合は{0,1}や{-1,+1}などで符号化する</p>
+                    <p>クラス数が$K(>2)$個の場合は$K$個の2値変数を用意し、クラスに対応する変数のみを1とし、他を0とするような符号化を行う</p>
+                    <p>このような2値変数をダミー変数という</p>
+                </section>
+
+                <section>
+                    <p>特徴数を$d$とすれば、特徴ベクトルは$d$次元線形空間を張る</p>
+                    <p>256個の2値変数からなる特徴ベクトルを考えると、特徴空間の区画は$2^256$となり、次元に対して指数関数的に増加する</p>
+                    <p>1000個の特徴ベクトルを用意しても、$2^256$個の区画のうちたった一部が埋まるだけである</p>
+                    <p>識別規則を学習するために必要なデータが、次元の増加と共に指数関数的に増加することを次元の呪いと呼ぶ</p>
+                </section>
+			</div>
+
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				slideNumber: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/math/math.js', async: true },
+					{ src: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML', async: true }
+				]
+			});
+			Reveal.addEventListener( 'slidechanged', function( event ) {
+				MathJax.Hub.Rerender(event.currentSlide);
+				// if (event.indexh == 4 && event.indexv == 5) {
+				// 	// Reveal.configure({ center: false });
+				// } else {
+				// 	Reveal.configure({ center: true });
+				// }
+			} );
+		</script>
+
+	</body>
+</html>

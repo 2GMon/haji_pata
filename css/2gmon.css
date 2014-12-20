@@ -1,0 +1,6 @@
+.reveal .slides { text-align: left; }
+.reveal p {
+    margin-bottom: 25px;
+    line-height: 1.2em;
+}
+/* .reveal ul { margin-bottom: 25px; } */
