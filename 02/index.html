@@ -1,0 +1,293 @@
+<!-- vim: foldmethod=marker
+-->
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>はじめてのパターン認識 勉強メモ</title>
+
+		<meta name="description" content="はじめてのパターン認識 2章">
+		<meta name="author" content="2GMon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.min.css">
+		<link rel="stylesheet" href="../css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="../css/2gmon.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+                <section>
+                    <h3>はじめてのパターン認識</h3>
+                    <h3>2章</h3>
+                    <p>
+                    <small>Created by <a href="https://twitter.com/2GMon">2GMon</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h3>話の流れ</h3>
+
+                    <ul>
+                        <li>識別規則と学習法の概要</li>
+                        <li>汎化能力を推定する方法</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>識別規則は、入力データ${\bf x}$からクラス$C_i \in \Omega = \{ C_1, \cdots , C_K \}$への写像であり、
+                    写像の方法は識別規則によって、関数値の正負・ダミー変数表現・事後確率の最大値・決定木の終端ノードなど様々である</p>
+                </section>
+
+                <section>
+                    <h3>事後確率による方法</h3>
+                    <ul>
+                        <li>特徴空間に確率分布を仮定し、事後確率が最大のクラスに分類する</li>
+                        <li>確率分布のパラメータを推定する</li>
+                        <li>代表例はベイズの最大事後確率法</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>距離による方法</h3>
+                    <ul>
+                        <li>入力ベクトル${\bf x}$と各クラスの代表ベクトルとの距離を計算し、一番近い代表ベクトルのクラスに分類する</li>
+                        <li>代表例は最近傍法</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>関数値による方法</h3>
+                    <ul>
+                        <li>関数$f({\bf x})$の正負、あるいは最大値でクラスを決める</li>
+                        <li>関数$f({\bf x})$を識別関数という</li>
+                        <li>代表例はパーセプトロン・SVM</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>決定木による方法</h3>
+                    <ul>
+                        <li>識別規則の真偽に応じて次の識別規則を順次適用し、決定木の形でクラスを決める</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>教師あり学習</h3>
+
+                    <p>入力データからクラスへの写像$y=f({\bf x})$を決めることが識別規則の学習である</p>
+                    <p>2クラス問題の線形識別関数の場合、識別規則は以下のようにパラメータ${\bf w}$と入力ベクトル${\bf x}$の線形関数を用いて表現される
+                    $$y = f({\bf x}; {\bf w}) = w_1 x_1 + \cdots + w_d x_d = {\bf w}^T {\bf x}$$</p>
+                    <p>識別クラスを関数値$y$の正負で決めるとすると、学習の目的は入力データが正しいクラスに対応する関数値を出力するように
+                    パラメータ${\bf w}$を調整することである</p>
+                </section>
+
+                <section>
+                    <p>学習には、入力ベクトルとそのクラスを対にした教師データが必要になる</p>
+                    <p>2クラスの場合は正負に対応した値$t \in \{-1, +1 \}$で表し、3クラス以上の場合はダミー変数表現を用いて
+                    ${\bf t} = (0, 1, 0, 0)^T$のように表す</p>
+                    <p>学習に用いられる対、全ての集合$({\bf x_i}, {\bf t_i})\ \ (i = 1, \cdots , N)$を学習データといい、以降では$D_L$で表す</p>
+                    <p>学習に使用しなかった対の集合をテストデータといい、以降では$D_T$で表す</p>
+                </section>
+
+                <section>
+                    <h3>回帰</h3>
+
+                    <p>教師入力として2値ではなく、任意の関数値が与えられる場合は、
+                    識別関数は入力${\bf x}$に対して与えられた関数値を出力するように学習され、このような問題を回帰という</p>
+                    <p>識別関数$f({\bf x})$は与えられた関数値を近似できるだけの能力を持つ必要があり、
+                    この能力は識別関数の複雑さに対応する</p>
+                </section>
+
+                <section>
+                    <h3>教師なし学習</h3>
+
+                    <p>教師データがない学習もあり、入力データ間の距離や類似度、統計的な性質に基づいてクラスタリングすることが主目的になる</p>
+                    <p>大量のデータに教師データを付与することはコストがかかるので、一部のデータのみ教師データを付与し、
+                    他は教師データなしで学習を行う形質導入学習(transductive learning)とう方法も提案されている</p>
+                </section>
+
+                <section>
+                    <h3>汎化能力</h3>
+
+                    <p>学習データに対する識別関数の出力値と教師データとの誤差が最小になるように、
+                    識別関数のパラメータを調整することが学習の目的だが、未知データに対しても上手く働くという保証はない</p>
+                    <p>学習した識別規則の、未知データに対する識別能力を汎化能力といい、誤差を汎化誤差という</p>
+                </section>
+
+                <section>
+                    <p>学習データ$D_L$に含まれる特徴ベクトルの$d$次元空間内での分布を$p_L$、
+                    テストデータ$D_T$に含まれる特徴ベクトルの$d$次元空間内での分布を$p_T$と表す</p>
+                    <p>このとき、$D_L$で学習し$D_T$でテストした時の誤り率を$\epsilon (p_L, p_T)$で表すとする</p>
+                    <p>$\epsilon(p, p)$を真の誤り率、$\epsilon(p_L, p_L)$を再代入誤り率という</p>
+                </section>
+
+                <section>
+                    <p>手元にあるデータを学習用とテスト用に分割する代表的な方法がいくつかある</p>
+                    <ul>
+                        <li>holdout</li>
+                        <li>cross validation(交差検定法)</li>
+                        <li>levave-one-out</li>
+                        <li>bootstrap</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>holdout</h3>
+                    <p>データを2つに分けて、一方を学習に使い、もう一方をテストに使う</p>
+                    <p>$\epsilon(p_L, p_T)$をholdout errorといい、以下が成り立つ
+                    $$ E_{D_L} \{ \epsilon(p_L, p_L) \} \leq \epsilon (p, p) \leq E_{D_T}\{ \epsilon (p_L, p_T) \} $$</p>
+                    <p>学習データを多くするとテストデータが減るので、性能評価の精度が悪くなり、
+                    テストデータを多くすると学習データが減るので、学習の精度が悪くなる</p>
+                </section>
+
+                <section>
+                    <h3>cross validation</h3>
+                    <p>holdoutの欠点を補うためによく使用される</p>
+                    <p>データをそれぞれ$m$個のグループに分割し、$m-1$個のグループを用いて学習、残りのグループでテストを行う。
+                    これを$m$繰り返し、誤り率の平均を性能の推定値とする</p>
+                    <p>すべてのデータを学習とテストに利用するので良い推定ができるが、
+                    分割によって偏りが生じる可能性があるので分割を変えてcross validationを行うとよい</p>
+                </section>
+
+                <section>
+                    <h3>levave-one-out</h3>
+                    <p>cross validationにおいてデータ数$N$とグループ数$m$を等しくした場合</p>
+                    <p>levave-one-outの場合は、組み合わせが1つなのでcross validationのように分割を変えて繰り返す必要はない</p>
+                </section>
+
+                <section>
+                    <h3>bootstrap</h3>
+                    <p>$N$個のデータから$N$回復元抽出を行って作ったブートストラップサンプル$N'$を用いて再代入誤り率のバイアス(真の識別率との差)
+                    を推定する</p>
+                    <p>復元抽出を行うため、複数回抽出されるデータや抽出されないデータなどが生じるが、
+                    $N$回の復元抽出で少なくとも一度サンプルされる確率は$p' = 1 - (1 - \frac{1}{N})^N \approx 1 - e^{-1} = 0.632$である</p>
+                    <p>$bias = \epsilon(N', N') - \epsilon(N', N)$とし、50個以上のbiasの平均値をバイアスを推定値とすると、
+                    誤識別率の予測値は以下で与えられる
+                    $$\epsilon = \epsilon(N, N) - \overline{bias} $$</p>
+                </section>
+
+                <section>
+                    <h3>汎化能力の評価</h3>
+                    <p>識別関数を評価した性能が悪い場合は、線形識別関数から非線形識別関数に変えたり、パラメータの次数を変えたりする</p>
+                    <p>パラメータの次数を変え、テストデータに対する誤り率がもっとも小さくなるパラメータを選択する方法をモデル選択という</p>
+                </section>
+
+                <section>
+                    <p>近似曲線を$y(x;D)$とすると信号成分$h(x)$との近似の良さは平均2乗誤差(MSE)で評価できる
+                    $$MSE=\int (y(x;D) - h(x))^2 p(x) dx = E \{ (y(x;D) - h(x))^2 \}$$</p>
+                    <p>1つのデータセットで近似の良さを評価するのは危険なので、複数のデータセットを用いて、それらの平均で評価する
+                    $$MSE_D = E_D \{(y(x;D) - h(x))^2\}$$</p>
+                </section>
+
+                <section>
+                    <p>ノイズの乗ったサインカーブを1次、3次、6次、10次の多項式で近似することを考える</p>
+                    <ul>
+                        <li>1次で近似すると、データから大きく外れる(バイアスが大きい)が、近似した直線同士の分散は小さい</li>
+                        <li>3次で近似した場合、よく近似でき、バイアスも分散も小さい</li>
+                        <li>6次で近似すると、ノイズを近似しはじめる</li>
+                        <li>10次で近似すると、信号成分よりもノイズを近似してしまい、バイアスは小さいが分散は大きい</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>バイアスと分散の成分は$MSE_D = E_D \{(y(x;D) - h(x))^2\}$から求められる
+                    <span style="font-size: 80%;">
+                    $$(y(x;D) - h(x))^2 = (y(x;D) - E_D \{y(x;D)\} + E_D \{y(x;D)\} - h(x))^2 \\
+                    = (y(x;D) - E_D \{y(x;D)\})^2 + (E_D \{y(x;D)\} - h(x))^2 \\
+                    + 2(y(x;D) - E_D \{y(x;D)\})(E_D \{y(x;D)\} - h(x)) $$
+                    </span></p>
+                    <p><span style="font-size: 80%;">$E_D\{(y(x;D) - E_D \{ y(x;D) \})\} = E_D\{y(x;D)\} - E_D\{y(x;D)\} = 0$</span>なので
+                    <span style="font-size: 80%;">
+                        $$E_D\{(y(x;D) - h(x))^2\} = (E_D\{y(x;D) - h(x)\})^2 + E_D\{(y(x;D) - E_D\{y(x;D)\})^2\}$$
+                    </span></p>
+                    <p>$(E_D\{y(x;D) - h(x)\})^2$がバイアス項で$E_D\{(y(x;D) - E_D\{y(x;D)\})^2\}$が分散項</p>
+                </section>
+
+                <section>
+                    <p>学習データの誤差が減少し、テストデータの誤差が増加するような減少を過学習という</p>
+                    <p>汎化能力が高いモデルはバイアスと分散がバランスしているといえる</p>
+                </section>
+
+                <section>
+                    <p>識別関数を$y=f({\bf x};{\bf w})$とした場合、$f()$の形や${\bf w}$の次元数が識別関数の複雑さを決定するので、
+                    これらを変えながら汎化誤差を推定する</p>
+                    <p>データの分布に統計モデルをを仮定した場合は、AIC・BIC・MDLなどで解析的に汎化誤差を評価できる</p>
+                </section>
+			</div>
+
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				slideNumber: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/math/math.js', async: true },
+					{ src: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML', async: true }
+				]
+			});
+			Reveal.addEventListener( 'slidechanged', function( event ) {
+				MathJax.Hub.Rerender(event.currentSlide);
+				// if (event.indexh == 4 && event.indexv == 5) {
+				// 	// Reveal.configure({ center: false });
+				// } else {
+				// 	Reveal.configure({ center: true });
+				// }
+			} );
+		</script>
+
+	</body>
+</html>
