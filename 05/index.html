@@ -1,0 +1,302 @@
+<!-- vim: foldmethod=marker
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>はじめてのパターン認識 勉強メモ</title>
+
+		<meta name="description" content="はじめてのパターン認識 5章">
+		<meta name="author" content="2GMon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.min.css">
+		<link rel="stylesheet" href="../css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="../css/2gmon.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+                <section>
+                    <h3>はじめてのパターン認識</h3>
+                    <h3>5章</h3>
+                    <p>
+                    <small>Created by <a href="https://twitter.com/2GMon">2GMon</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h3>話の流れ</h3>
+
+                    <ul>
+                        <li>kNN法について</li>
+                        <li>kNN法の誤り率とベイズ誤り率の関係</li>
+                        <li>kNN法の計算量緩和策</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>最近傍法</h3>
+                    <ul>
+                        <li>入力データと全ての学習データの距離比較を行い、一番近い学習データのクラスに識別する方法</li>
+                        <li>学習データが多ければ精度はかなり良いが、計算時間がかかる</li>
+                        <li>一番近い学習データの代わりに近いk個のデータを選び、一番多いクラスに識別するkNN法もある</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+                        <legend>NN法の識別規則</legend>
+                        <span style="font-size: 75%">
+                        $ 識別クラス = \left\{
+                            \begin{array}{ll}
+                            argmin_i\; d({\bf x}, {\bf x}_j^{(i)}) & min_{i,j}\; d({\bf x}, {\bf x}_j^{(i)}) < t のとき \\
+                                         reject & min_{i,j}\; d({\bf x}, {\bf x}_j^{(i)}) \geq t のとき
+                            \end{array}
+                        \right. $
+                        </span>
+                    </fieldset>
+                    <ul>
+                        <li>$K$個のクラスを$\Omega = \{ C_1, \ldots , C_K \}$</li>
+                        <li>$i$番目のクラスの学習データ数を$N(i)$</li>
+                        <li>学習データの集合を$S_i = \{ {\bf x}_1^{(i)}, \ldots , {\bf x}_{N(i)}^{(i)}\}$</li>
+                        <li>${\bf x}$と${\bf x}_j^{(i)}$のユークリッド距離を$d({\bf x}, {\bf x}_j^{(i)}) = || {\bf x} - {\bf x}_j^{(i)}||$</li>
+                    </ul>
+                    <p>とした場合</p>
+                </section>
+
+                <section>
+                    <fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+                        <legend>kNN法の識別規則</legend>
+                        <span style="font-size: 75%">
+                        $ 識別クラス = \left\{
+                            \begin{array}{ll}
+                            j & \{k_j\} = max \{k_1, \ldots , k_K \} のとき \\
+                                         reject & \{k_1, \ldots , k_K \} = max \{k_1, \ldots , k_K \} のとき
+                            \end{array}
+                        \right. $
+                        </span>
+                    </fieldset>
+                    <ul>
+                        <li>学習データの集合を$T_N = \{ {\bf x}_i , \ldots , {\bf x}_N \}$</li>
+                        <li>クラスの集合を$\Omega = \{ C_1, \ldots , C_K \}$</li>
+                        <li>$i$番目のデータが所属するクラスを$\omega_i \in \Omega$</li>
+                        <li>入力${\bf x}$に最も近い$k$個の学習データの集合を$k({\bf x}) = \{ {\bf x}_{i1} , \ldots , {\bf x}_{ik} \}$</li>
+                        <li>$k$個の学習データのうちクラス$j$に所属するデータの数を$k_j\; (k = k_1 + \cdots + k_K)$</li>
+                    </ul>
+                    <p>とした場合</p>
+                </section>
+
+                <section>
+                    <img src="./1.jpg" width="640px">
+                    <p>上図の場合は、$\hat{\epsilon}_{2NN} \leq \hat{\epsilon}^* \leq \hat{\epsilon}_{1NN}$が成り立っている</p>
+                </section>
+
+                <section>
+                    <p>2クラス問題の場合、条件付きベイズ誤り率は事後確率の小さい方(3章)
+                    $$ \epsilon({\bf x}) = min[P(C_1|{\bf x}), P(C_2|{\bf x})]$$</p>
+                    <p>ベイズ誤り率は条件付きベイズ誤り率の期待値
+                    $$ \epsilon^* = \int \epsilon({\bf x})p({\bf x}) d{\bf x} $$</p>
+                </section>
+
+                <section>
+                    <p>入力${\bf x}$に最も近いデータを${\bf x}_{1NN}$とし、$N$個のデータの集合を$T_N$としたときに漸近仮定
+                    $$ \displaystyle \lim_{N \to \infty} T_N => d({\bf x}, {\bf x}_{1NN}) \to 0 $$
+                    が成り立てば、kNN誤り率とベイズ誤り率の間には以下の関係が成り立つ
+                    <span style="font-size: 80%">
+                        $$ \frac{1}{2} \epsilon^* \leq \epsilon_{2NN} \leq \epsilon_{4NN} \leq \cdots \leq \epsilon^* \leq \cdots \leq \epsilon_{3NN} \leq \epsilon_{1NN} \leq 2 \epsilon^* $$</span></p>
+                </section>
+
+                <section>
+                    <h3>1NNの場合の証明</h3>
+                    <p>まず、1NN誤り率の上限を求める</p>
+                    <p>1NNの場合、誤り率は
+                    <span style="font-size: 80%">
+                        $$ \begin{align} r_1({\bf x}, {\bf x}_{1nn}) = & P({\bf x} \in C_1, {\bf x}_{1NN} \in C_2 | {\bf x}, {\bf x}_{1NN}) \\
+                        & + P({\bf x} \in C_2, {\bf x}_{1NN} \in C_1 | {\bf x}, {\bf x}_{1NN}) \\
+                        = & P(C_1 | {\bf x}) P(C_2 | {\bf x}_{1NN}) + P(C_2 | {\bf x}) P(C_1 | {\bf x}_{1NN})
+                        \end{align}$$</span></p>
+                    <p>漸近仮定が成り立てば${\bf x}$と${\bf x}_{1NN}$の区別はなくなるので
+                    <span style="font-size: 80%">
+                        $$ \displaystyle \begin{align}
+                        r_1({\bf x}) = & \lim_{N \to \infty} r_1({\bf x}, {\bf x}_{1NN}) = 2P(C_1 | {\bf x})P(C_2 | {\bf x}) \\
+                        = & 2P(C_1 | {\bf x})(1 - P(C_1 | {\bf x})) = 2(1 - P(C_2 | {\bf x}))P(C_2 | {\bf x}) \\
+                        = & 2 \epsilon({\bf x}) (1 - \epsilon({\bf x}))
+                        \end{align} $$</span></p>
+                </section>
+
+                <section>
+                    <p>よって、1NNの誤り率の期待値は
+                    <span style="font-size: 80%">
+                        $$ \begin{align}
+                        \epsilon_{1NN} = & \int 2 \epsilon({\bf x})(1 - \epsilon({\bf x})) p({\bf x}) d{\bf x} \\
+                        = & 2 \int \epsilon({\bf x}) p({\bf x}) d{\bf x} - 2 \int \epsilon^2({\bf x}) p({\bf x}) d{\bf x}
+                        \end{align}$$</span></p>
+                    <p>第1項はベイズ誤り率$\epsilon^*$の2倍で、第2項は$\geq 0$なので $\epsilon_{1NN} \leq 2\epsilon^*$ となり、
+                    1NN誤り率の上限はベイズ誤り率の2倍に抑えられる</p>
+                </section>
+
+                <section>
+                    <p>次に、1NN誤り率の下限を求める</p>
+                    <p>ベイズ誤り率は
+                    <span style="font-size: 80%">
+                    $$ \begin{align}
+                    \epsilon^* = & \int min[P(C_1 | {\bf x}), P(C_2 | {\bf x})] p({\bf x}) d{\bf x} \\
+                    = & \int min[p({\bf x} | C_1) P(C_1), p({\bf x} | C_2) P(C_2)] d{\bf x}
+                    \end{align}$$</span></p>
+                    <p>1NN誤り率は
+                    <span style="font-size: 80%">
+                    $$ \begin{align}
+                    \epsilon_{1NN} = & \int 2P(C_1 | {\bf x}) P(C_2 | {\bf x}) p({\bf x}) d{\bf x} \\
+                    = & \int 2 \frac{p({\bf x} | C_1) P(C_1) p({\bf x} | C_2) P(C_2)}{p({\bf x}} d{\bf x} \\
+                    = & \int 2 \frac{p({\bf x} | C_1) P(C_1) p({\bf x} | C_2) P(C_2)}{p({\bf x} | C_1) P(C_1) + p({\bf x} | C_2) P(C_2)} d{\bf x}
+                    \end{align}$$</span></p>
+                </section>
+
+                <section>
+                    <p>
+                    $$ \begin{array}{ll}
+                    a > b であれば\;\; & b < \frac{2}{1 + b/a}b = 2 \frac{ab}{a + b} \\
+                    a < b であれば\;\; & a < \frac{2}{1 + a/b}a = 2 \frac{ab}{a + b}
+                    \end{array} $$
+                    なので
+                    $$ min[a, b] \leq 2 \frac{ab}{a + b} $$
+                          より</p>
+                    <p>
+                          $a = p({\bf x} | C_1) P(C_1), b = p({\bf x} | C_2) P(C_2)$とおくと
+                          $ \epsilon^* \leq \epsilon_{1NN} $</p>
+                    <p>以上より
+                    $$ \epsilon^* \leq \epsilon_{1NN} \leq 2 \epsilon^* $$</p>
+                </section>
+
+                <section>
+                    <p>
+                    漸近仮定が成り立つ場合は以下の関係が成り立つ
+                    <span style="font-size: 80%">
+                        $$ \frac{1}{2} \epsilon^* \leq \epsilon_{2NN} \leq \epsilon_{4NN} \leq \cdots \leq \epsilon^* \leq \cdots \leq \epsilon_{3NN} \leq \epsilon_{1NN} \leq 2 \epsilon^* $$</span></p>
+                    <p>次は、漸近仮定が成り立つのかを考える</p>
+                </section>
+
+                <section>
+                    <p>$d$次元空間において、あるデータ${\bf x}$から距離$a$以内にあるデータの数を考える</p>
+                    <p>データが一様に分布しているとすると距離$a$以内にあるデータの数は、半径$a$の$d$次元超球の体積に比例する</p>
+                    <p>$d$次元単位超球の表面積$S_d$は
+                    <span style="font-size: 80%">
+                        $$ S_d = \frac{2 \pi^{1/2}}{\Gamma (d / 2)},\;\; \Gamma (x) = \int_0^\infty u^{x - 1} e^{-u} du $$
+                    </span></p>
+                    <p>半径$a$の超球の表面積と体積は
+                    <span style="font-size: 80%">
+                        $$ S_d(a) = S_d * a^{d-1} \\
+                        V_d(a) = \int_0^a S_d x^{d - 1} dx = \frac{S_d a^d}{d} $$
+                    </span></p>
+                </section>
+
+                <section>
+                    <p>半径1の超球の体積と、厚さ$\epsilon$の殻の体積比を求めると以下のようになる
+                    <span style="font-size: 80%">
+                        $$ \frac{V_d(1) - V_d(1- \epsilon)}{V_d(1)} = 1 - (1 - \epsilon)^d \xrightarrow{d \to \infty} 1 $$
+                    </span></p>
+                    <p>次元が大きくなると体積比は1に近づくので、全体積のうち厚さ$\epsilon$の殻が占める割合が大きくなる。
+                    よって、あるデータ${\bf x}$から見ると、他のデータは${\bf x}$の近傍にはなく、同じような距離にあることがわかる</p>
+                    <p>次元が大きい時は漸近仮定が成り立たない</p>
+                </section>
+
+                <section>
+                    <p>$d$次元の$k$クラス問題で、各クラスの学習データはそれぞれ$M$個あるとする</p>
+                    <p>kNN法では入力データ${\bf x}$が与えられた時、全ての学習データとのユークリッド距離を計算するので
+                    $O(KMd)$となる。さらに距離をソートするので$O(KMlog(KM))$となり、kNN法は実時間認識には向いていない</p>
+                </section>
+
+                <section>
+                    <img src="./1.jpg" width="360px">
+                    <p>1NNの場合、BやDは本来正しい領域に存在しているのに、A,CやE,Fに影響されて誤ってしまうので、ベイズ誤り率よりも高い確率で誤りが発生する</p>
+                    <p>正しくないクラスの領域に存在している学習データを削除すれば防げるが、正確なベイズ境界はわからない</p>
+                    <p>誤って識別されたデータを全て削除して構成された誤り削除集合を用いて識別を行う、Edited kNN法がある</p>
+                    <p>Edited kNN法の誤り率はベイズ誤り率と等しくはならないが、ベイズ誤り率と1NN誤り率の間になることが知られている</p>
+                </section>
+
+                <section>
+                    <p>kNN法はベイズ境界付近のデータが重要なので、識別に寄与しないデータを学習データから削除するCondensed kNN法がある</p>
+                    <p>識別に寄与しないデータは $\epsilon({\bf x}) = min[P(C_1|{\bf x}), P(C_2|{\bf x})]$ を小さくするように決める</p>
+                </section>
+
+                <section>
+                    <p>学習データをクラスタリングなどを用いて重なりのない集合に分割し、木構造に組織化する</p>
+                    <p>集合の平均ベクトルと入力データの距離を計算することで、遠いクラスタに属するデータそれぞれとの距離計さんを省くことができる</p>
+                    <p>これを限定法といい、効率的に探索できるかは木構造による</p>
+                </section>
+
+                <section>
+                    <p>近似解を高速に求める近似最近傍探索がある</p>
+                    <p>学習データの集合を$P=\{{\bf x}_i\}\; (i = 1, \ldots , N)$とし、入力データ${\bf q}$に対する最近傍解${\bf x}^*$の $\epsilon$近似解 ${\bf x}$ を <span style="font-size: 80%">$d({\bf q}, {\bf x}) \leq (1 + \epsilon)d({\bf q}, {\bf x}^*)$</span>を満たす解<span style="font-size: 80%">${\bf x} \in P$</span>として定義する</p>
+                    <p><span style="font-size: 80%">$d({\bf q}, {\bf x})$</span>の値は一般的にわからないので、何らかの形で近似解が$\epsilon$近似となることを保証する必要がある</p>
+                    <p>$\epsilon$近似を保証できる時間的・空間的制約の少ない領域分割法が必要で、BBD木やリングカバー木などが提案されている</p>
+                </section>
+			</div>
+		</div>
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+		<script>
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				slideNumber: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/math/math.js', async: true },
+					{ src: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML', async: true }
+				]
+			});
+			// Reveal.addEventListener( 'slidechanged', function( event ) {
+			// 	MathJax.Hub.Rerender(event.currentSlide);
+				// if (event.indexh == 4 && event.indexv == 5) {
+				// 	// Reveal.configure({ center: false });
+				// } else {
+				// 	Reveal.configure({ center: true });
+				// }
+			// } );
+		</script>
+	</body>
+</html>
