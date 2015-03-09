@@ -1,0 +1,598 @@
+<!-- vim: foldmethod=marker
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>はじめてのパターン認識 勉強メモ</title>
+
+		<meta name="description" content="はじめてのパターン認識 5章">
+		<meta name="author" content="2GMon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.min.css">
+		<link rel="stylesheet" href="../css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="../css/2gmon.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+                <section>
+                    <h3>はじめてのパターン認識</h3>
+                    <h3>6章</h3>
+                    <p>
+                    <small>Created by <a href="https://twitter.com/2GMon">2GMon</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h3>話の流れ</h3>
+
+                    <ul>
+                        <li>線形識別関数の定義</li>
+                        <li>パラメータの決定方法</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>線形識別関数</h3>
+                    <p>4章で正規分布から線形識別関数を導いたように、線形識別関数は一般に
+                    $$ f({\bf x}) = \textbf{$\omega$}^T {\bf x} + \omega_0 $$ という形で表される</p>
+                    <p>線形識別関数の識別境界は、入力データが$d$次元の時、$d-1$次元の超平面になる</p>
+                </section>
+
+                <section>
+                    <fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+                        <legend>線形識別関数の識別規則</legend>
+                        <span style="font-size: 75%">
+                            $$ f({\bf x}) = \textbf{$\omega$}^T {\bf x} + \omega_0,\;\;
+                            識別クラス = \left\{ \begin{array} \\
+                              C_1 \;\; (f({\bf x}) \geq 0) \\
+                              C_2 \;\; (f({\bf x}) < 0)
+                            \end{array} \right. $$
+                        </span>
+                    </fieldset>
+                    <p>識別境界では$\textbf{$\omega$}^T {\bf x} = - \omega_0$が成り立つ</p>
+                </section>
+
+                <section>
+                    <p>多クラス問題の線形識別関数の作り方は複数存在する</p>
+                    <ul>
+                        <li>一対他(one versus the rest)</li>
+                        <li>一対一(one versus one)</li>
+                        <li>最大識別関数法</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>一対他</h3>
+                    <fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+                        <legend>一対他の識別規則</legend>
+                        <span style="font-size: 75%">
+                            $$ 識別クラス = \left\{ \begin{array} \\
+                            C_j \;\; (あるjについてf_j({\bf x}) > 0の場合) \\
+                            C_K \;\; (全てのj \neq K について f_j({\bf x}) < 0 の場合) \\
+                            \end{array} \right. $$
+                        </span>
+                    </fieldset>
+                    <p><span style="font-size: 75%">$f_j({\bf x})\;(j = 1, \ldots , K - 1)$</span></p>
+                    <p style="text-indent: 2em;" >クラス$j$とそれ以外の全てのクラスを識別する線形識別関数</p>
+                    <ul>
+                        <li>複数の識別関数が$>0$となる場合に識別できない</li>
+                        <li>正のクラスのデータ数が負のクラスのデータ数に比べて少なくなりすぎる</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>一対一</h3>
+                    <p>クラス$i$と$j$を識別する$K(K - 1)/2$個の2クラス識別関数 $f_{ij} ({\bf x}) \; (1 \leq i < j \leq K)$ を用意し、
+                    識別関数の多数決でクラスを決定する</p>
+                    <ul>
+                        <li>識別関数同士で矛盾が生じる領域の識別ができない</li>
+                        <li>入力データのクラスの直接関係ない識別関数がたくさんあるので、正確に多数決をとれない</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>最大識別関数法</h3>
+                    <fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+                        <legend>最大識別関数法の識別規則</legend>
+                        <span style="font-size: 75%">
+                            $$ 識別クラス = argmax_j f_j ({\bf x}) = argmax_j(\textbf{$\omega$}_j^T {\bf x} + \omega_{j0}) $$
+                        </span>
+                    </fieldset>
+                    <p>クラス$i$と$j$の識別境界は$f_i({\bf x}) = f_j({\bf x})$なので
+                    $$ f_{ij} ({\bf x}) = (\textbf{$\omega$}_i - \textbf{$\omega$}_j)^T {\bf x} + (\omega_{i0} - \omega_{j0}) = 0 $$
+                    を満たす$K-1$個の識別境界ができる</p>
+                    <ul>
+                        <li>識別境界上以外の点は必ず識別できる</li>
+                        <li>各クラスの占める領域は単連結で凸になる</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>単連結</h3>
+                    <p>穴の開いていない領域のこと</p>
+                    <br />
+                    <h3>凸</h3>
+                    <p>領域内の任意の2点を結ぶ直線上のすべての点が、その領域に含まれている</p>
+                </section>
+
+                <section>
+                    <p>あるクラス$i$の領域に属する点${\bf x}_1, {\bf x}_2$を結ぶ直線上の点${\bf x}^*$を考える</p>
+                    <p>${\bf x}^*$は$0 \leq \lambda \leq 1$に対して
+                    $$ {\bf x}^* = \lambda {\bf x}_1 + (1 - \lambda) {\bf x}_2 $$
+                    と表されるので、識別関数の線形性より
+                    $$ f_i({\bf x}^*) = \lambda f_i ({\bf x}_1) + (1 - \lambda) f_i ({\bf x}_2) $$
+                    が成り立つ</p>
+                    <p>クラス$i$の領域内では $f_i ({\bf x}_1) > f_{j \neq i}({\bf x}_1)$ と $f_i ({\bf x}_2) > f_{j \neq i}({\bf x}_2)$
+                    が成り立っているので $f_i ({\bf x}^*) > f_{j \neq i}({\bf x}^*)$ が成り立つ</p>
+                </section>
+
+                <section>
+                    <h3>パラメータの推定</h3>
+                    <ul>
+                        <li>最小2乗誤差基準</li>
+                        <li>フィッシャーの判別関数</li>
+                        <li>ロジスティック回帰</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>最小2乗誤差基準</h3>
+                    <p>識別関数の出力値と教師入力との差を最小にするパラメータを求める手法で、解析的に解ける</p>
+                </section>
+
+                <section>
+                    <p>係数ベクトル$\textbf{$\omega$} = (\omega_0, \omega_1, \ldots , \omega_d)^T$、$i$番目の学習データ
+                    ${\bf x}_i = (x_{i0}, x_{i1}, \ldots , x_{id})\;(x_{i0} = 1)$ と定義すると、識別関数は
+                    $$ f({\bf x}) = \omega_0 + \omega_1 x_1 + \cdots + \omega_d x_d = \textbf{$\omega$}^T {\bf x} $$
+                    と表される</p>
+                    <p>データ${\bf x}_i$が所属するクラスは、以下のように与えられる
+                    $$ t_i = \left\{
+                    \begin{array}{l} 1\;({\bf x}_i \in C_1) \\
+                    -1\;({\bf x}_i \in C_2) \end{array}
+                    \right. $$</p>
+                    <p>学習データ数を$N$とし、行列${\bf X}$,ベクトル${\bf t}$を以下のように定義する
+                    $$ {\bf X} = ({\bf x}_1 , \cdots , {\bf x}_N)^T, \;\; {\bf t} = (t_1, \cdots , t_N)^T $$</p>
+                </section>
+
+                <section>
+                    <p>評価関数$E(\textbf{$\omega$})$は識別関数の出力値と教師信号の差の2乗誤差
+                    $$ E(\textbf{$\omega$}) = \sum_{i=1}^N (t_i - f({\bf x}_i))^2
+                    = ({\bf t} - {\bf X} \textbf{$\omega$})^T ({\bf t} - {\bf X} \textbf{$\omega$}) $$</p>
+                    <p>$E(\textbf{$\omega$})$を最小にするパラメータ$\textbf{$\omega$}$は$E(\textbf{$\omega$})$を$\textbf{$\omega$}$で
+                    微分して0と置くことで得られるので
+                    $$ \begin{align} \frac{\partial E(\textbf{$\omega$})}{\partial \textbf{$\omega$}} & = 
+                    \frac{{\bf t}^T{\bf t} - \textbf{$\omega$}^T {\bf X}^T {\bf t} - {\bf t}^T {\bf X} \textbf{$\omega$} + \textbf{$\omega$}^T {\bf X}^T {\bf X} \textbf{$\omega$}}{\partial \textbf{$\omega$}} \\
+                    & = \frac{{\bf t}^T{\bf t} - {\bf t}^T {\bf X} \textbf{$\omega$} - {\bf t}^T {\bf X} \textbf{$\omega$} + \textbf{$\omega$}^T {\bf X}^T {\bf X} \textbf{$\omega$}}{\partial \textbf{$\omega$}} \\
+                    & = \frac{{\bf t}^T{\bf t} - 2 {\bf X}^T {\bf t} \textbf{$\omega$} + \textbf{$\omega$}^T {\bf X}^T {\bf X} \textbf{$\omega$}}{\partial \textbf{$\omega$}} \\
+                    & = -2{\bf X}^T{\bf t} + ({\bf X}^T{\bf X} + {\bf X}{\bf X}^T)\textbf{$\omega$} \\
+                    & = -2{\bf X}^T({\bf t} - {\bf X} \textbf{$\omega$}) = 0 \end{align}$$
+                    よって$ \hat{\textbf{$\omega$}} = ({\bf X}^T {\bf X})^{-1} {\bf X}^T {\bf t} $</p>
+                </section>
+
+                <section>
+                    <p>$ \hat{\textbf{$\omega$}} = ({\bf X}^T {\bf X})^{-1} {\bf X}^T {\bf t} $を正規方程式といい、 学習データに対する予測値
+                    $\hat{{\bf t}}$は以下の式で得られる
+                    $$ \hat{{\bf t}} = {\bf X} \hat{\textbf{$\omega$}} = {\bf X} ({\bf X}^T {\bf X})^{-1} {\bf X}^T {\bf t} $$</p>
+                    <p>行列 $ {\bf X} ({\bf X}^T {\bf X})^{-1} {\bf X}^T $ は教師データ $ {\bf t} $ を予測値 $ \hat{{\bf t}} $ に変換する行列で
+                    ハット行列と呼ばれる</p>
+                </section>
+
+                <section>
+                    <p>多クラス問題へ拡張するためには$K$個の識別関数 $ f_k({\bf x}) = \textbf{$\omega$}_k^T {\bf x} $ を用意して、パラメータ$\textbf{$\omega$}_k $を2クラスと同様に求めればいい</p>
+                    <p>2クラス問題と違って、一つの学習データにクラス数と同じ$K$個の教師入力が必要になり、$i$番目の教師入力は
+                    $ {\bf t}_i = (t_{i1}, \ldots , t_{iK}) $のダミー変数で与えられる</p>
+                    <p>$N$個の学習データ $ {\bf X} = ({\bf x}_1, \ldots , {\bf x}_N)^T $ に対する教師データを
+                    $ {\bf T} = ({\bf t}_1, \ldots , {\bf t}_N)^T $とすると、2乗誤差を最小にするパラメータは
+                    $$ \hat{{\bf W}} = ({\bf X}^T {\bf X})^{-1} {\bf X}^T {\bf T} $$ で与えられる</p>
+                </section>
+
+                <section>
+                    <p>最適なパラメータが求まったとき、識別関数は
+                    $$ G({\bf x}) = \hat{{\bf W}}^T {\bf x} = (\textbf{$\omega$}_1, \cdots , \textbf{$\omega$}_K)^T {\bf x} =
+                    (g_1({\bf x}), \cdots , g_K({\bf x}))^T $$ となり、識別規則は以下のようになる
+                    $$ 識別クラス = argmax_j \; g_j({\bf x}) $$</p>
+                    <p>ただし、最大識別法では、複数のクラスが一直線上に並んでいるような分布の場合うまく識別できない</p>
+                </section>
+
+                <section>
+                    <h3>線形判別分析</h3>
+                    <p>線形識別関数は、$d$次元ベクトルを${\bf x}$を、ベクトル$\textbf{$\omega$}$上のスカラー関数$f({\bf x})$に写像していると考えることができる</p>
+                    <p>線形判別分析はクラス間の分布ができるだけ重ならないような写像方向を見つける</p>
+                    <p>線形判別分析の目的はクラス分離を良くすることで、クラスを識別する機能は無い</p>
+                </section>
+
+                <section>
+                    <img src="./1.jpg" width="640px">
+                    <p>重なりの少ない写像を実現するベクトル$\textbf{$\omega$}$を見つけることが必要になる</p>
+                </section>
+
+                <section>
+                    <h3>フィッシャーの線形判別関数</h3>
+                    <p>クラス$(C_1, C_2)$、各クラスの学習データ数$N_1, N_2$のとき、線形識別関数$y=\textbf{$\omega$}^T{\bf x}$は線形変換なので、
+                    平均ベクトル$m_k$を $m_k=\textbf{$\omega$}^T \textbf{$\mu$}_k$に写像する</p>
+                    <p>各クラスの平均値の差が大きいほどクラスの分離がよく、クラスごとのデータの分布の広がりが小さいほうが、クラス間の重なりが小さくなることが期待できる</p>
+                </section>
+
+                <section>
+                    <h3>クラス間変動</h3>
+                    <p>平均値の差$m_1 - m_2 = \textbf{$\omega$}^T (\textbf{$\mu$}_1 - \textbf{$\mu$}_2)$の2乗</p>
+                    <br />
+                    <h3>クラス内変動</h3>
+                    <p>$S_k^2 = \sum_{i \in C_k} (y_i - m_k)^2$</p>
+                    <p>全クラス内変動は$S_1^2 + S_2^2$になる</p>
+                </section>
+
+                <section>
+                    <h3>フィッシャーの基準</h3>
+                    <p>クラス間変動とクラス内変動の比
+                    $$ J(\textbf{$\omega$}) = \frac{(m_1 - m_2)^2}{S_1^2 + S_2^2} $$</p>
+                    <p>フィッシャーの基準を最大にする$\textbf{$\omega$}$がクラスを最もよく分離する写像になる</p>
+                </section>
+
+                <section>
+                    <p>クラス内変動は以下のように表現できる
+                    $$ \begin{align} (m_1 - m_2)^2 & = (\textbf{$\omega$}^T (\textbf{$\mu$}_1 - \textbf{$\mu$}_2))^2 \\
+                    & = (\textbf{$\omega$}^T(\textbf{$\mu$}_1 - \textbf{$\mu$}_2)) (\textbf{$\omega$}^T(\textbf{$\mu$}_1 - \textbf{$\mu$}_2))^T \\
+                    & = \textbf{$\omega$}^T (\textbf{$\mu$}_1 - \textbf{$\mu$}_2) (\textbf{$\mu$}_1 - \textbf{$\mu$}_2)^T \textbf{$\omega$} \\
+                    & = \textbf{$\omega$}^T {\bf S}_B \textbf{$\omega$} \end{align} $$</p>
+                    <p>クラス内変動も同様に以下のように表現できる
+                    $$ \begin{align} S_k^2 & = \sum_{i \in C_k} (y_i - m_k)^2 = \sum_{i \in C_k} (\textbf{$\omega$}^T ({\bf x}_i - \textbf{$\mu$}_k))^2 \\
+                    & = \sum_{i \in C_k} (\textbf{$\omega$} ({\bf x}_i - \textbf{$\mu$}_k)) (\textbf{$\omega$} ({\bf x}_i - \textbf{$\mu$}_k))^T \\
+                    & = \textbf{$\omega$} \left( \sum_{i \in C_k} ({\bf x}_i - \textbf{$\mu$}_k) ({\bf x}_i - \textbf{$\mu$}_k)^T \right) \textbf{$\omega$} \\
+                    & = \textbf{$\omega$}^T {\bf S}_k \textbf{$\omega$} \end{align} $$</p>
+                </section>
+
+                <section>
+                    <p>全クラス内変動は以下のようになるので
+                    $$ S_1^2 + S_2^2 = \textbf{$\omega$}^T ({\bf S}_1 + {\bf S}_2) \textbf{$\omega$} = \textbf{$\omega$}^T {\bf S}_W \textbf{$\omega$} $$
+                    フィッシャーの基準は
+                    $$ J(\textbf{$\omega$}) = \frac{\textbf{$\omega$}^T {\bf S}_B \textbf{$\omega$}}{\textbf{$\omega$}^T {\bf S}_W \textbf{$\omega$}} $$となる</p>
+                    <p>この式を最大化する解は、次の一般化固有問題を解くことで得られる
+                    $$ {\bf S}_B \textbf{$\omega$} = \lambda {\bf S}_w \textbf{$\omega$} $$
+                    しかし、${\bf S}_w$が正則行列なら${\bf S}_w^{-1} {\bf S}_B \textbf{$\omega$} = \lambda \textbf{$\omega$}$ と書けるので、
+                    通常の固有値問題となる</p>
+                </section>
+
+                <section>
+                    <p>${\bf S}_B \textbf{$\omega$} = (\textbf{$\mu$}_1 - \textbf{$\mu$}_2) (\textbf{$\mu$}_1 - \textbf{$\mu$}_2)^T
+                    \textbf{$\omega$} \propto (\textbf{$\mu$}_1 - \textbf{$\mu$}_2)$なので、
+                    $$ \textbf{$\omega$} \propto {\bf S}_W^{-1} {\bf S}_B \textbf{$\omega$} \propto {\bf S}_w^{-1}(\textbf{$\mu$}_1 - \textbf{$\mu$}_2) $$がフィッシャーの基準による最適な$\textbf{$\omega$}$となる</p>
+                </section>
+
+                <section>
+                    <p>$\omega_0$は識別境界を与えるバイアス項だが、フィッシャーの基準では $m_1 - m_2$の項で$\omega_0$が消去されてしまうため、
+                    直接求められない</p>
+                    <p>クラス条件付き確率$p({\bf x}|C)\;(k=1,2)$が同じ共分散行列
+                    $$ \textbf{$\Sigma$}_{pool} = P(C_1) \textbf{$\Sigma$}_1 + P(C_2) \textbf{$\Sigma$}_2 $$
+                    を持つ多次元正規分布関数と仮定できれば
+                    $$ \textbf{$\Sigma$}_{pool} = \frac{1}{N} {\bf S}_W $$ となり、共分散行列と全クラスのクラス内変動行列は比例定数の違いのみになる</p>
+                    <p>正規分布を線形写像しても正規分布なので、$\textbf{$\omega$}$上に写像されたデータのクラス条件付き分布を1次元正規分布関数で近似し、事後確率が同じになる点を$\omega_0$とすればいい</p>
+                </section>
+
+                <section>
+                    <h3>判別分析法</h3>
+                    <p>線形変換後の$y = \textbf{$\omega$}^T {\bf x}$の平均と分散は、クラス$k = 1, 2$について
+                    $$ m_k = \textbf{$\omega$}^T \textbf{$\mu$}_k + \omega_0 \\
+                    \sigma_k^2 = \textbf{$\omega$}^T \textbf{$\Sigma$}_k \textbf{$\omega$} $$で定義される</p>
+                    <p>クラス分離度の評価関数を$h(m_1, \sigma_1^2, m_2, \sigma_2^2)$で表すと、これを最大にする$\textbf{$\omega$}$と$\omega_0$は、
+                    $h$をそれらで微分して0と置くと求まるので
+                    $$ \frac{\partial h}{\partial \textbf{$\omega$}} = \frac{\partial h}{\partial \sigma_1^2}
+                    \frac{\partial \sigma_1^2}{\partial \textbf{$\omega$}}
+                    + \frac{\partial h}{\partial \sigma_2^2} \frac{\partial \sigma_2^2}{\partial \textbf{$\omega$}}
+                    + \frac{\partial h}{\partial m_1} \frac{\partial m_1}{\partial \textbf{$\omega$}}
+                    + \frac{\partial h}{\partial m_2} \frac{\partial m_2}{\partial \textbf{$\omega$}} = 0 \\
+                    \frac{\partial h}{\partial \omega_0} = \frac{\partial h}{\partial \sigma_1^2}
+                    \frac{\partial \sigma_1^2}{\partial \omega_0}
+                    + \frac{\partial h}{\partial \sigma_2^2} \frac{\partial \sigma_2^2}{\partial \omega_0}
+                    + \frac{\partial h}{\partial m_1} \frac{\partial m_1}{\partial \omega_0}
+                    + \frac{\partial h}{\partial m_2} \frac{\partial m_2}{\partial \omega_0} = 0 $$ を解けばいい</p>
+                </section>
+
+                <section>
+                    <p>$$ \frac{\partial \sigma_k^2}{\partial \textbf{$\omega$}} = 2 \textbf{$\Sigma$}_k \textbf{$\omega$},\;
+                    \frac{\partial \sigma_k^2}{\partial \omega_0} = 0,\;
+                    \frac{\partial m_k}{\partial \textbf{$\omega$}} = \textbf{$\mu$}_k,\;
+                    \frac{\partial m_k}{\partial \omega_0} = 1 $$なので</p>
+                    <p>評価関数の微分に代入すれば
+                    $$ 2\left(\frac{\partial h}{\partial \sigma_1^2} \textbf{$\Sigma$}_1
+                    + \frac{\partial h}{\partial \sigma_2^2} \textbf{$\Sigma$}_2\right) \textbf{$\omega$}
+                    = \frac{\partial h}{\partial m_1} \textbf{$\mu$}_1
+                    + \frac{\partial h}{\partial m_2} \textbf{$\mu$}_2 \\
+                    \frac{\partial h}{\partial m_1} + \frac{\partial h}{\partial m_2} = 0 $$</p>
+                </section>
+
+                <section>
+                    <p>$$ s = \frac{\frac{\partial h}{\partial \sigma_1^2}}
+                    {\frac{\partial h}{\partial \sigma_1^2} + \frac{\partial h}{\partial \sigma_2^2}} $$と定義して
+                    $$ 2\left(\frac{\partial h}{\partial \sigma_1^2} \textbf{$\Sigma$}_1
+                    + \frac{\partial h}{\partial \sigma_2^2} \textbf{$\Sigma$}_2\right) \textbf{$\omega$}
+                    = \frac{\partial h}{\partial m_1} \textbf{$\mu$}_1 + \frac{\partial h}{\partial m_2} \textbf{$\mu$}_2 $$を整理すると
+                    $$ 2\left(\frac{\partial h}{\partial \sigma_1^2} + \frac{\partial h}{\partial \sigma_2^2}\right)
+                    (s \textbf{$\Sigma$}_1 + (1 - s)\textbf{$\Sigma$}_2) \textbf{$\omega$}
+                    = \frac{\partial h}{\partial m_1} (\textbf{$\mu$}_2 - \textbf{$\mu$}_1) $$より、最適な$\textbf{$\omega$}$は、
+                    スカラー項を無視すれば
+                    $$ \textbf{$\omega$} = (s \textbf{$\Sigma$}_1 + (1 - s) \textbf{$\Sigma$}_2)^{-1} (\textbf{$\mu$}_2 - \textbf{$\mu$}_1) $$
+                    となる</p>
+                </section>
+
+                <section>
+                    <p>評価関数をクラス間分散とクラス内分散の比
+                    $$ h = \frac{P(C_1)(m_1 - \bar{m})^2 + P(C_2)(m_2 - \bar{m})^2}{P(C_1)\sigma_1^2 + P(C_2)\sigma_2^2} $$
+                    で定義した判別関数を判別分析法という($\bar{m}$は全データの平均)</p>
+                    <p>この場合、
+                    $$ \frac{\partial h}{\partial \sigma_k^2} = \frac{P(C_k)(P(C_1)(m_1 - \bar{m})^2 + P(C_2)(m_2 - \bar{m})^2)}
+                    {(P(C_1)\sigma_1^2 + P(C_2)\sigma_2^2)^2} $$を
+                    $ s = \frac{\frac{\partial h}{\partial \sigma_1^2}}
+                    {\frac{\partial h}{\partial \sigma_1^2} + \frac{\partial h}{\partial \sigma_2^2}} $
+                    に代入すると$s = P(C_1)$なので、最適な$\textbf{$\omega$}$は
+                    $$ \textbf{$\omega$} = (P(C_1) \textbf{$\Sigma$}_1 + P(C_2) \textbf{$\Sigma$}_2)^{-1}
+                    (\textbf{$\mu$}_2 - \textbf{$\mu$}_1) $$</p>
+                </section>
+
+                <section>
+                    <p>$$ \frac{\partial h}{\partial m_k} = \frac{2 P(C_k)(m_k - \bar{m})}{P(C_1)\sigma_1^2 + P(C_2)\sigma_2^2} $$と
+                    $$ \frac{\partial h}{\partial m_1} + \frac{\partial h}{\partial m_2} = 0 $$より
+                    $$ P(C_1)(m_1 - \bar{m}) + P(C_2)(m_2 - \bar{m}) = 0 $$なので、$m_k = \textbf{$\omega$}^T \textbf{$\mu$}_k + \omega_0$
+                    を代入して整理すれば、最適なバイアス項が得られる
+                    $$ \omega_0 = -\textbf{$\omega$}(P(C_1)\textbf{$\mu$}_1 + P(C_2)\textbf{$\mu$}_2) $$
+                    </p>
+                </section>
+
+                <section>
+                    <p>多クラス問題の場合は識別境界を計算できない</p>
+                    <p>各クラスのデータ数を$N_k\;(k=1,\ldots,K)$, クラス内変動を
+                    $$ {\bf S}_k = \sum_{i \in C_k} ({\bf x}_i - \textbf{$\mu$}_k) ({\bf x}_i - \textbf{$\mu$}_k)^T \\
+                    \textbf{$\mu$}_k = \frac{1}{N_k} \sum_{i \in C_k} {\bf x}_i \\
+                    {\bf S}_W = \sum_{k = 1}^K {\bf S}_k $$ とすると、全データの平均$\textbf{$\mu$}$は
+                    $$ \textbf{$\mu$} = \frac{1}{N} \sum_{i = 1}^N {\bf x}_i = \frac{1}{N} \sum_{k = 1}^K N_k \textbf{$\mu$}_k \\
+                    N = N_1 + \cdots + N_K $$</p>
+                </section>
+
+                <section>
+                    <p>全平均からの全データの変動の和を全変動${\bf S}_T$という
+                    $$ \begin{align} {\bf S}_T & = \sum_{i = 1}^N ({\bf x}_i - \textbf{$\mu$}) ({\bf x}_i - \textbf{$\mu$})^T \\
+                    & = \sum_{k = 1}^K \sum_{i \in C_k} ({\bf x}_i - \textbf{$\mu$}_k + \textbf{$\mu$}_k - \textbf{$\mu$}) ({\bf x}_i - \textbf{$\mu$}_k + \textbf{$\mu$}_k - \textbf{$\mu$})^T \\
+                    & = \sum_{k = 1}^K \sum_{i \in C_k} ({\bf x}_i - \textbf{$\mu$}_k) ({\bf x}_i - \textbf{$\mu$}_k)^T + \sum_{k = 1}^K N_k (\textbf{$\mu$}_k - \textbf{$\mu$}) (\textbf{$\mu$}_k - \textbf{$\mu$})^T \\
+                    & = {\bf S}_W + \sum_{k = 1}^K N_k (\textbf{$\mu$}_k - \textbf{$\mu$}) (\textbf{$\mu$}_k - \textbf{$\mu$})^T \end{align} $$</p>
+                    <p>最後の項から、クラス間変動${\bf S}_B$を定義する
+                    $$ {\bf S}_B = \sum_{k = 1}^K N_k (\textbf{$\mu$}_k - \textbf{$\mu$}) (\textbf{$\mu$}_k - \textbf{$\mu$})^T $$</p>
+                </section>
+
+                <section>
+                    <p>各クラスの平均ベクトル${\bf m}_k$と全平均ベクトル${\bf m}$は
+                    $$ {\bf m}_k = \frac{1}{N_k} \sum_{i \in C_k} = \frac{1}{N_k} \sum_{i \in C_k} {\bf W}^T {\bf x}_i = {\bf W}^T \textbf{$\mu$}_k \\
+                    {\bf m} = \frac{1}{N} \sum_{k = 1}^K N_k {\bf m}_k = \frac{1}{N} \sum_{k = 1}^K N_k {\bf W}^T \textbf{$\mu$}_k = {\bf W}^T \textbf{$\mu$} $$なので</p>
+                </section>
+
+                <section>
+                    <p>$$ \begin{align}
+                    \widetilde{{\bf S}}_W & = \sum_{k = 1}^K \sum_{i \in C_k}({\bf y}_i - {\bf m}_k) ({\bf y}_i - {\bf m}_k)^T \\
+                    & = \sum_{k = 1}^K \sum_{i \in C_k} {\bf W}^T ({\bf x}_i - \textbf{$\mu$}_k) \{ {\bf W}^T ({\bf x}_i - \textbf{$\mu$}_k)\}^T \\
+                    & = \sum_{k = 1}^K \sum_{i \in C_k} {\bf W}^T ({\bf x}_i - \textbf{$\mu$}_k) ({\bf x}_i - \textbf{$\mu$}_k)^T {\bf W} = {\bf W}^T {\bf S}_W {\bf W}
+                    \end{align} $$</p>
+                    <p>$$ \begin{align}
+                    \widetilde{{\bf S}}_B & = \sum_{k = 1}^K N_k ({\bf m}_k - {\bf m}) ({\bf m}_k - {\bf m})^T \\
+                    & = \sum_{k = 1}^K N_k {\bf W}^T (\textbf{$\mu$}_k - \textbf{$\mu$}) \{ {\bf W}^T (\textbf{$\mu$}_k - \textbf{$\mu$}) \}^T \\
+                    & = \sum_{k = 1}^K N_k {\bf W}^T (\textbf{$\mu$}_k - \textbf{$\mu$}) (\textbf{$\mu$}_k - \textbf{$\mu$})^T {\bf W} = {\bf W}^T {\bf S}_B {\bf W}
+                    \end{align} $$</p>
+                </section>
+
+                <section>
+                    <p>最適な写像行列${\bf W}$を求めるための基準は、クラス間変動行列$\widetilde{{\bf S}}_B$と
+                    クラス内変動行列$\widetilde{{\bf S}}_W$の比を最大化すること</p>
+                    <p>行列の比なので、スカラーに変換する必要があり、一つの方法が
+                    $$ J({\bf W}) = Tr({\bf S}_W^{-1} {\bf S}_B) = Tr(({\bf W}^T {\bf S}_W {\bf W})^{-1} {\bf W}^T {\bf S}_B {\bf W})$$
+                    を最大化すること</p>
+                </section>
+
+                <section>
+                    <h3>ロジスティック回帰</h3>
+                    <p>線形識別関数$y = \textbf{$\omega$}^T {\bf x}$は、データが識別境界から離れるに従って、関数値が線形に上昇し続ける</p>
+                    <p>ロジスティック回帰では、関数値を区間$(0, 1)$に制限し、確率的な解釈を可能にする</p>
+                    <p>回帰という名前だが識別が目的</p>
+                </section>
+
+                <section>
+                    <p>クラス$C_1$の事後確率$P(C_1|{\bf x})$は
+                    $$ P(C_1|{\bf x}) = \frac{p({\bf x}|C_1) P(C_1)}{p({\bf x}|C_1) P(C_1) + p({\bf x}|C_2) P(C_2)} $$</p>
+                    <p>このとき、$ a = ln \frac{p({\bf x}|C_1)P(C_1)}{p({\bf x}|C_2)P(C_2)} $とおけば
+                    $$ P(C_1|{\bf x}) = \frac{1}{1 + \exp(-a)} = \sigma(a) $$ と表すことができる</p>
+                    <p>$\sigma(a)$をロジスティック関数と呼ぶ</p>
+                </section>
+
+                <section>
+                    <p>ロジスティック関数$y = \sigma()$は無限区間$(-\infty, \infty)$を区間$(0, 1)$に写像する、S字型をした圧縮関数</p>
+                    <p>また、以下のような対称性を示す
+                    $$ \sigma(-a) = 1 - \sigma(a) $$</p>
+                    <p>ロジスティック関数の逆関数をロジット関数といい
+                    $$ a = ln \left( \frac{\sigma(a)}{1 - \sigma(a)} \right) = ln \frac{P(C_1|{\bf x})}{P(C_2|{\bf x})} $$
+                    最後の項の事後確率の比をオッズ、その対数をログオッズという</p>
+                </section>
+
+                <section>
+                    <p>ロジスティック回帰モデルは、事象の有無を$\{0, 1\}$の2値で表し、事象の生起確率をロジスティック関数で表す</p>
+                    <p>$N$個の値$ \hat{{\bf x}} = (x1, \ldots , x_N)^T $を観測した時、事象が生起する確率を以下の式で表す
+                    $$ p(1|x_1, \ldots , x_N) = f({\bf x}) = \frac{1}{1 + \exp(-(\omega_0 + \omega_1 x_1 + \cdots + \omega_N x_N))} $$</p>
+                    <p>$ \textbf{$\omega$} = (\omega_0, \omega_1, \ldots , \omega_N)^T,\;\; {\bf x} = (1, \hat{{\bf x}}^T)^T, \;\; a = \textbf{$\omega$}^T {\bf x} $ とすれば、 $f({\bf x})$はロジスティック関数となり、以下のように表せる
+                    $$ f({\bf x}) = \sigma(a) = \frac{1}{1 + \exp(-a)} = \frac{\exp\;a}{1 + \exp\;a} $$</p>
+                </section>
+
+                <section>
+                    <p>$ f({\bf x}) = \sigma(a) = \frac{1}{1 + \exp(-a)} = \frac{\exp\;a}{1 + \exp\;a} $は非線形なので、学習データの線形関数$a$を
+                    ロジスティック関数で非線形変換したモデルで事象を表現している</p>
+                    <p>線形関数を非線形変換しても識別境界は超平面となるので、ロジスティック回帰モデルは一般化線形モデルの1つである</p>
+                </section>
+
+                <section>
+                    <p>ロジット関数は
+                    $$ a = ln \frac{p(1|{\bf x})}{1 - p(1|{\bf x})} = \textbf{$\omega$}^T {\bf x} $$で、オッズは
+                    $$ \frac{p(1|{\bf x})}{1 - p(1|{\bf x})} = \frac{p(1|{\bf x})}{p(0|{\bf x})} = \exp(\textbf{$\omega$}^T {\bf x}) $$</p>
+                </section>
+
+                <section>
+                    <p>${\bf x}$の中の$x_1$が1増えた状態$\widetilde{\bf x} = (1, (x_1 + 1), x_2, \ldots, x_N)$を考える</p>
+                    <p>${\bf x}$とのオッズ比は
+                    $$ \frac{\frac{p(1|\widetilde{\bf x})}{1 - p(1|\widetilde{\bf x})}}{\frac{p(1 | {\bf x})}{1 - p(1 | {\bf x})}}
+                    = \frac{\exp(\omega_0 + \omega_1(x_1 + 1) + \omega_2 x_2 + \cdots + \omega_N x_N)} {\exp(\omega_0 + \omega_1 x_1 + \omega_2 x_2 + \cdots + \omega_N x_N)}
+                    = \exp\;\omega_1$$ </p>
+                </section>
+
+                <section>
+                    <h3>オッズ比の効用</h3>
+                    <table style="border:2px solid #ffffff; border-collapse: separate; padding: 10px; margin: 20px;">
+                        <tr>
+                            <th colspan="2"></th><th>条件A</th><th>条件B</th>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">環境1</td><td>成功</td><td>0.9</td><td>0.99</td>
+                        </tr>
+                        <tr>
+                            <td>失敗</td><td>0.1</td><td>0.01</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">環境2</td><td>成功</td><td>0.5</td><td>0.55</td>
+                        </tr>
+                        <tr>
+                            <td>失敗</td><td>0.5</td><td>0.45</td>
+                        </tr>
+                    </table>
+                    <p>環境1, 2でそれぞれ条件Aから条件Bに変えた時の成功の増加割合は$P(B)/P(A) = 1.1$で等しい</p>
+                    <p>しかし、0.9から0.99への上昇と0.5から0.55への上昇には質的な違いがある</p>
+                    <p>オッズ比$\frac{P(B)}{1 - P(B)} / \frac{P(A)}{1 - P(A)}$を求めると、環境1は11、環境2は1.22となる</p>
+                </section>
+
+                <section>
+                    <h3>パラメータの最尤推定</h3>
+                    <p>モデルの出力を確率変数$t$、$t$が1となる確率を$p(t = 1) = \alpha$、0となる確率を$p(t = 0) = 1 - \alpha$で表すと、
+                    確率変数$t$はパラメータ$\alpha$を持つベルヌーイ試行
+                    $$ f(t|\alpha) = \alpha^t(1 - \alpha)^{1 - t} \;\; (t = 0, 1) $$に従うので、$N$回の試行に基づく尤度関数は
+                    $$ L(\alpha_1, \ldots, \alpha_N) = \prod_{i = 1}^N f(t_i | \alpha_i) = \prod_{i = 1}^N \alpha_i^{t_i} (1 - \alpha_i)^{1 - t_i} $$
+                    となり、 負の対数尤度関数は
+                    $$ \begin{align} \cal{L}(\alpha_1, \ldots , \alpha_N) & = - \ln L(\alpha_1, \ldots , \alpha_N) \\
+                    & = - \sum_{i = 1}^N (t_i \ln \alpha_i + (1 - t_i) \ln(1 - \alpha_i)) \end{align}$$</p>
+                </section>
+
+                <section>
+                    <p>$$ \alpha_i = \sigma({\bf x}_i) = \frac{\exp (\textbf{$\omega$}^T {\bf x}_i)}{1 + \exp(\textbf{$\omega$} {\bf x}_i)} $$
+                    を負の対数尤度関数に代入すると
+                    $$ \begin{align} \cal{L}(\alpha_1, \ldots , \alpha_N) & = \cal{L}(\textbf{$\omega$}) \\
+                    & = s \sum_{i = 1}^N (t_i \textbf{$\omega$}^T {\bf x}_i - \ln(1 + \exp(\textbf{$\omega$}^T {\bf x}_i))) \end{align} $$
+                    この交差エントロピー型誤差関数を最小にするパラメータ$\textbf{$\omega$}$を得るために、対数尤度関数を$\textbf{$\omega$}$で
+                    微分すればよい</p>
+                </section>
+
+                <section>
+                    <p>対数尤度関数を$\textbf{$\omega$}$で微分すると
+                    $$ \begin{align} \frac{\partial \cal{L}(\textbf{$\omega$})}{\partial \textbf{$\omega$}} & =
+                    - \sum_{i = 1}^N \left( t_i {\bf x}_i - \frac{{\bf x}_i \exp(\textbf{$\omega$}^T {\bf x}_i)}{1 + \exp(\textbf{$\omega$}^T {\bf x}_i)} \right) \\
+                    & = \sum_{i = 1}^N {\bf x}_i (\alpha_i - t_i) \end{align} $$となり、この式が0となる$\textbf{$\omega$}$が解である</p>
+                    <p>しかし、解析的に解を求めることは出来ないので、最急降下法やニュートン-ラフソン法を用いる</p>
+                </section>
+
+                <section>
+                    <p>多クラスへ拡張するためには、各クラスごとに線形変換
+                    $$ a_k = \textbf{$\omega$}_k^T {\bf x}\;\;\;(k=1, \ldots , K) $$
+                    を求め、事後確率を
+                    $$ P(C_k|{\bf x}) = \pi_k({\bf x}) = \frac{\exp a_k}{\sum_{j = 1}^K \exp a_j} $$
+                    で計算して、最大事後確率を与えるクラスに分類する</p>
+                    <p>この関数をソフトマックス関数という</p>
+                </section>
+
+                <section>
+                    <p>クラス数$K$、学習データ${\bf X} = ({\bf x}_1, \ldots , {\bf x}_K)^T$、教師データ${\bf T} = ({\bf t}_1, \ldots , {\bf t}_N)^T$
+                    とすると、尤度関数は
+                    $$ p({\bf T}|\textbf{$\omega$}_1, \cdots , \textbf{$\omega$}_K) = \prod_{i=1}^N \prod_{k=1}^K P(C_k|{\bf x}_i)^{t_{ik}}
+                    = \prod_{i=1}^N \prod_{k=1}^K \pi_{ik}^{t_{ik}} \\
+                    \pi_{ik} = \frac{\exp a_{ik}}{\sum_{j = 1}^K \exp a_{ij}},\;\;\; a_{ij} = \textbf{$\omega$}_j^T {\bf x}_i $$</p>
+                </section>
+
+                <section>
+                    <p>事後確率をソフトマックス関数でモデル化した場合の負の対数尤度関数は
+                    $$ \begin{align} E(\textbf{$\omega$}_i, \cdots , \textbf{$\omega$}_K) & = - \ln p({\bf T}|\textbf{$\omega$}_i, \cdots , \textbf{$\omega$}_K) \\
+                    & = - \sum_{i = 1}^N \sum_{k = 1}^K t_{ik} \pi_{ik} \end{align} $$となり、各$\textbf{$\omega$}_j$の最尤推定は
+                    評価関数を$\textbf{$\omega$}_j$で微分して0とおけば求められる</p>
+                </section>
+			</div>
+		</div>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				SVG: {
+					scale: 80
+				},
+				"HTML-CSS": {
+					scale: 80
+				}
+			});
+		</script>
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+		<script>
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				slideNumber: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				math: {
+                    mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+                    config: 'TeX-AMS_HTML-full'
+                },
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/math/math.js', async: true },
+				]
+			});
+			// Reveal.addEventListener( 'slidechanged', function( event ) {
+			// 	MathJax.Hub.Rerender(event.currentSlide);
+				// if (event.indexh == 4 && event.indexv == 5) {
+				// 	// Reveal.configure({ center: false });
+				// } else {
+				// 	Reveal.configure({ center: true });
+				// }
+			// } );
+		</script>
+	</body>
+</html>
