@@ -1,0 +1,401 @@
+<!-- vim: foldmethod=marker
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>はじめてのパターン認識 勉強メモ</title>
+
+		<meta name="description" content="はじめてのパターン認識 9章">
+		<meta name="author" content="2GMon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.min.css">
+		<link rel="stylesheet" href="../css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="../css/2gmon.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h3>はじめてのパターン認識</h3>
+					<h3>9章</h3>
+					<p>
+					<small>Created by <a href="https://twitter.com/2GMon">2GMon</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h3>話の流れ</h3>
+
+					<ul>
+						<li>部分空間</li>
+						<li>部分空間法</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>部分空間(1/4)</h3>
+					<p>データの次元が小さいほうが効率に学習できるので、主成分分析によって
+					$d$次元特徴ベクトルを$r(\leq d)$次元空間に縮約することもある</p>
+					<p>主成分分析によって共分散行列の固有値問題を解いて、大きな固有値を持つ
+					固有ベクトルで構成されたものが部分空間</p>
+				</section>
+
+				<section>
+					<h3>部分空間(2/4)</h3>
+					<fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+						<legend>$d$次元ベクトル空間$V$の部分空間</legend>
+						$$W = \{ a_1 \boldsymbol{x}_1 + \cdots + a_r \boldsymbol{x}_r | a_i \in \cal{R}, i = 1, \ldots , r \}$$
+					</fieldset>
+					<p>$W$が$\boldsymbol{x}_1, \ldots , \boldsymbol{x}_r$で張られる$r$次元の部分空間であるとは、
+					$\boldsymbol{x}_1, \ldots , \boldsymbol{x}_r$が1次独立</p>
+					<p>よって、$W$が$V$の部分空間であるための必要十分条件は
+					<ul>
+						<li>$W \neq 0 $</li>
+						<li>$\boldsymbol{x}, \boldsymbol{y} \in W \Rightarrow \boldsymbol{x} + \boldsymbol{y} \in W$</li>
+						<li>$\boldsymbol{x} \in W, \lambda \in \cal{R} \Rightarrow \lambda \boldsymbol{x} \in W$</li>
+					</ul>
+					</p>
+				</section>
+
+				<section>
+					<h3>部分空間(3/4)</h3>
+					<p>1次独立な10個の$d$次元ベクトルがあれば、$d$次元ベクトル空間$V$内に10次元の部分空間
+					${\bf S}$を張ることができる</p>
+					<p>ベクトル空間$V$は部分空間$S$と直行する部分空間$S^{\perp}$に分解できるので、ベクトル空間
+					$V = \boldsymbol{S} \cup \boldsymbol{S}^{\perp}, \boldsymbol{S} \cap \boldsymbol{S}^{\perp} = \phi$が成り立つ</p>
+					<p>ベクトル空間内$V$の任意のベクトル$\boldsymbol{x}$は$\boldsymbol{x} = \boldsymbol{x}_{\bf S} + \boldsymbol{x}_{{\bf S}^{\perp}}$のように分解できる</p>
+				</section>
+
+				<section>
+					<h3>部分空間(4/4)</h3>
+					<p>直交していないベクトルを分解するためにはグラム-シュミットの正規直交化などで直交座標系に変換する必要がある</p>
+					<fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+						<legend>グラム-シュミットの正規直交化</legend>
+						<ul>
+							<li>$\boldsymbol{n}_1 = \boldsymbol{x} / ||\boldsymbol{x}_1||$とする</li>
+							<li>$i > 1$について以下を繰り返す
+								$$ \widetilde{\boldsymbol{n}}_i = \boldsymbol{x}_i
+								- \sum_{j = 1}^{i - 1} (\boldsymbol{n}_j^T \boldsymbol{x}_i) \boldsymbol{n}_j, \;\; \boldsymbol{n}_i = \frac{\widetilde{\boldsymbol{n}}_i}{|| \widetilde{\boldsymbol{n}}_i||}$$
+							</li>
+						</ul>
+					</fieldset>
+					<p>次元を縮約し、正規直交基底を求めるための手法に主成分分析もある</p>
+				</section>
+
+				<section>
+					<h3>主成分分析(1/4)</h3>
+					<p>学習データ$\boldsymbol{x}_i = (x_{i1}, \ldots , x_{id})^T \;\; (i = 1, \ldots , N)$
+					の分散が最大になる方向の線形変換を求める手法</p>
+					<p>$N$個のデータ$\boldsymbol{x}_i$を係数ベクトル$\boldsymbol{a}_j = (a_{j1}, \ldots , a_{jd})^T$ を用いて線形変換すると
+					$$ \boldsymbol{s}_j = (s_{1j}, \ldots , s_{Nj})^T = \overline{\bf X} \boldsymbol{a}_j $$
+					$$ \overline{\bf X} = (\boldsymbol{x}_i - \overline{\boldsymbol{x}} , \ldots ,
+					\boldsymbol{x}_N - \overline{\boldsymbol{x}})^T $$
+					となり、変換後のデータの分散は
+					$$ Var\{\boldsymbol{s}_j\} \propto \boldsymbol{s}_j^T \boldsymbol{s}_j
+					= (\overline{\bf X} \boldsymbol{a}_j)^T \overline{\bf X} \boldsymbol{a}_j
+					= \boldsymbol{a}_j^T \overline{\bf X}^T \overline{\bf X} \boldsymbol{a}_j
+					= \boldsymbol{a}_j^T Var\{\overline{\bf X}\} \boldsymbol{a}_j $$
+					$$ Var\{\overline{\bf X}\} = \frac{1}{N} \overline{\bf X}^T \overline{\bf X} $$</p>
+				</section>
+
+				<section>
+					<h3>主成分分析(2/4)</h3>
+					<p>変換後のデータの分散が最大となる射影ベクトルは係数ベクトル$\boldsymbol{a}_j$のノルムを
+					1に制約したラグランジュ関数
+					$$ E(\boldsymbol{a}_j) = \boldsymbol{a}_j^T Var\{\overline{\bf X}\} \boldsymbol{a}_j
+					- \lambda (\boldsymbol{a}_j^T \boldsymbol{a}_j - 1) $$
+					を最大にする$\boldsymbol{a}_j$を見つければ良い</p>
+					<p>$$
+					\frac{\partial E(\boldsymbol{a}_j)}{\partial \boldsymbol{a}_j}
+					= 2Var\{\overline{\bf X}\} \boldsymbol{a}_j - 2 \lambda \boldsymbol{a}_j = 0$$
+					より、
+					$$ Var\{\overline{\bf X}\} \boldsymbol{a}_j = \lambda \boldsymbol{a}_j $$
+					なので、共分散行列に関する固有値問題を解くことで、分散が最大になる
+					射影ベクトル$\boldsymbol{a}_j$が得られることが分かる</p>
+				</section>
+
+				<section>
+					<h3>主成分分析(3/4)</h3>
+					<p>共分散行列の固有値を$\lambda_1 \geq \ldots \geq \lambda_d$、対応する固有ベクトルを
+					$\boldsymbol{a}_i , \ldots , \boldsymbol{a}_d$とすると、共分散行列が実対称行列なので
+					固有ベクトルは互いに直交し以下が成り立つ
+					$$ \boldsymbol{a}_i^T \boldsymbol{a}_j = \delta_{ij} = \left\{
+					\begin{array}{ll}
+					1 & (i = j) \\
+					0 & (i \neq j)
+					\end{array} \right. $$</p>
+					<p>最大固有値に対応する固有ベクトルで線形変換した特徴の分散は最大固有値に一致する
+					$$ Var\{\boldsymbol{a}_1\} = \boldsymbol{a}_1^T Var\{\overline{\bf X}\} \boldsymbol{a}_1
+					= \lambda_1 \boldsymbol{a}_1^T \boldsymbol{a}_1 = \lambda_1 $$</p>
+				</section>
+
+				<section>
+					<h3>主成分分析(4/4)</h3>
+					<p>最大固有値に対応する固有ベクトルで線形変換された特徴量を第1主成分といい、
+					$k$番目の固有値に対応する固有ベクトルで線形変換された特徴量を第$k$主成分という</p>
+					<p>変換された特徴量の分散は固有値に一致するので、全分散量は
+					$$ V_{total} = \sum_{i = 1}^d \lambda_i $$
+					となり、元データの持つ全分散量と一致する</p>
+					<p>第$k$主成分の分散の全分散に対する割合$c_k = \frac{\lambda_k}{V_{total}}$を
+					第$k$成分の寄与率という</p>
+				</section>
+
+				<section>
+					<h3>特異値分解(1/5)</h3>
+					<p>行列を複数の行列の積に分解する方法として、グラム-シュミットの正規直交基底を得るための
+					QR分解がある</p>
+					<p>主成分分析に密接に関連した行列の分解法に特異値分解(SVD)もある</p>
+					<p>特異値分解によって、任意の$n \times p$行列${\bf X}$を3つの行列の積に分解することができる
+					$$ \begin{align} {\bf X} & = {\bf U} \boldsymbol{\Lambda} {\bf V}^T \\
+					& = \left(\boldsymbol{u}_1 \; \boldsymbol{u}_2 \; \ldots \; \boldsymbol{u}_p \right)
+					\left( \begin{array}{cccc}
+						\sqrt{\lambda_1} & 0 & \cdots & 0 \\
+						0 & \sqrt{\lambda_2} & \cdots & 0 \\
+						\vdots & \vdots & \ddots & \vdots \\
+						0 & 0 & \cdots & \sqrt{\lambda_p}
+					\end{array} \right)
+					\left( \begin{array}{c}
+					\boldsymbol{v}_1^T \\
+					\boldsymbol{v}_2^T \\
+					\vdots \\
+					\boldsymbol{v}_p^T
+					\end{array} \right) \end{align}$$</p>
+				</section>
+
+				<section>
+					<h3>特異値分解(2/5)</h3>
+					<p>特異値分解によって分解された<br />
+					行列${\bf U}$は${\bf X}{\bf X}^T$の非ゼロ固有値に対応する固有ベクトルからなる$n \times p$正規直交行列<br />
+					行列${\bf V}$は${\bf X}^T{\bf X}$の非ゼロ固有値に対応する固有ベクトルからなる$p \times p$正規直交行列</p>
+				</section>
+
+				<section>
+					<h3>特異値分解(3/5)</h3>
+					<p>${\bf X} = {\bf U} \boldsymbol{\Lambda} {\bf V}^T$より${\bf X}{\bf V} = {\bf U} \boldsymbol{\Lambda}$が成り立つので
+					$$ \left({\bf X} \boldsymbol{v}_1 \; {\bf X} \boldsymbol{v}_2 \; \cdots \; {\bf X} \boldsymbol{v}_1 \right) = \left( \sqrt{\lambda_1} \boldsymbol{u}_1 \; \sqrt{\lambda_2} \boldsymbol{u}_2 \; \cdots \; \sqrt{\lambda_p} \boldsymbol{u}_p \right) $$
+					となり、データ行列を$\boldsymbol{v}_1$で線形変換したベクトルが$\sqrt{\lambda_1} \boldsymbol{u}_1$となるので、分散は
+					$$ Var\{{\bf X} \boldsymbol{v}_1\} = ({\bf X} \boldsymbol{v}_1)^T ({\bf X}\boldsymbol{v}_1) = (\sqrt{\lambda_1} \boldsymbol{u}_1)^T (\sqrt{\lambda_1} \boldsymbol{u}_1) = \lambda_1 $$
+					となり、第1主成分の最大固有値に一致する</p>
+				</section>
+
+				<section>
+					<h3>特異値分解(4/5)</h3>
+					<p>第1主成分から第$q(\leq p)$主成分までの$\boldsymbol{v}_i$で構成された部分空間
+					$$ \widetilde{\bf V} = ( \boldsymbol{v}_1 \; \cdots \; \boldsymbol{v}_q ) $$
+					へのデータ${\bf X}$の射影${\bf X}\widetilde{\bf V}$は共分散行列が
+					$$ \begin{align} Var\{{\bf X} {\bf V}\} & = ({\bf X}\widetilde{\bf V})^T ({\bf X}\widetilde{\bf V})
+					= \widetilde{\bf V}^T {\bf X}^T {\bf X} \widetilde{\bf V}
+					= \widetilde{\bf V}^T {\bf V} \boldsymbol{\Lambda}^T {\bf U}^T {\bf U} \boldsymbol{\Lambda} {\bf V}^T \widetilde{\bf V} \\
+					& = \widetilde{\bf V}^T {\bf V} \boldsymbol{\Lambda}^2 {\bf V}^T \widetilde{\bf V} \end{align} $$
+					となり、
+					$$ \widetilde{\bf V}^T {\bf V} = \left( \begin{array}{c}
+						\boldsymbol{v}_1^T \\
+						\vdots \\
+						\boldsymbol{v}_q^T \\
+					\end{array} \right)
+					\left(
+					\boldsymbol{v}_1 \; \cdots \; \boldsymbol{v}_p
+					\right)
+					= \left( \begin{array}{ccccccc}
+					1 & 0 & \cdots & 0 & 0 & \cdots & 0 \\
+					0 & 1 & \cdots & 0 & 0 & \cdots & 0 \\
+					\vdots & \ddots  & \ddots & 0 & \vdots & \vdots & \vdots \\
+					0 & \cdots & 0 & 1 & 0 & \cdots & 0
+					\end{array} \right) $$
+					なので、共分散行列は$Var\{{\bf X}\widetilde{\bf V}\} = \boldsymbol{\Lambda}_q^2$となる</p>
+				</section>
+
+				<section>
+					<h3>特異値分解(5/5)</h3>
+					<p>$\boldsymbol{\Lambda}_q$は特異値行列の最初の$q$個の特異値以外を$0$とした対角行列で
+					$\boldsymbol{\Lambda}$の代わりに$\boldsymbol{\Lambda}_q$を用いた行列の分解
+					$$ \widetilde{\bf X} = {\bf U} \boldsymbol{\Lambda}_q {\bf V}^T
+					= \sum_{i = 1}^q \sqrt{\lambda_i} \boldsymbol{u}_i \boldsymbol{v}_i^T $$
+					は${\bf X}$のランク$q$の誤差最小という意味での最良近似になっている</p>
+				</section>
+
+				<section>
+					<h3>部分空間法(1/2)</h3>
+					<p>クラスごとに部分空間を構成する正規直交基底を学習データから求め、入力データを
+					各クラスの部分空間に射影して識別する手法</p>
+					<p>クラスごとに独立に部分空間を構成できるので多クラスの識別器の構築が容易で、
+					次元の少ない部分空間への射影計算で識別が行えるので計算量が少ない</p>
+				</section>
+
+				<section>
+					<h3>部分空間法(2/2)</h3>
+					<p>相関行列を使う方法と共分散行列を使う方法がある</p>
+					<p>相関行列はデータそのもののばらつきを評価し、
+					各部分空間の原点はデータベクトルの原点になるので、全ての部分空間が共通の原点を持つ</p>
+					<p>共分散行列は平均ベクトルを中心としたデータのばらつきを評価し、各部分空間の原点は
+					平均ベクトルになる</p>
+					<p>どちらも基本的な認識原理は同じで、識別性能もあまり変わらない</p>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(1/8)</h3>
+					<p>相関行列を使う方法の1つ</p>
+					<p>基底ベクトルは$\boldsymbol{x}$が$i$番目のクラスに所属している時、部分空間$\boldsymbol{S}_i$へ正射影した長さの期待値が最大になるように選択する
+					$$ \begin{align} & E\left\{ \sum_{j = 1}^{d_i} (\boldsymbol{x}^T \boldsymbol{u}_{ij})^2 | \boldsymbol{x} \in C_i \right\}
+					= E\left\{ \sum_{j = 1}^{d_i} (\boldsymbol{x}^T \boldsymbol{u}_{ij}) (\boldsymbol{x}^T \boldsymbol{u}_{ij})^T | \boldsymbol{x} \in C_i \right\} \\
+					& = E\left\{ \sum_{j = 1}^{d_i} \boldsymbol{x}^T \boldsymbol{u}_{ij} \boldsymbol{x} | \boldsymbol{x} \in C_i \right\}
+					= E \left\{ \boldsymbol{x}^T \left( \sum_{j = 1}^{d_i} \boldsymbol{u}_{ij} \boldsymbol{u}_{ij} \right) \boldsymbol{x} | \boldsymbol{x} \in C_i \right\} \\
+					& = E \left\{ \boldsymbol{x}^T \boldsymbol{P}_i \boldsymbol{x} | \boldsymbol{x} \in C_i \right\} \end{align} $$
+					このとき$||\boldsymbol{u}_{ij}|| = 1$の制約を設ける</p>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(2/8)</h3>
+					<p>$ \boldsymbol{P}_i = \sum_{j = 1}^{d_i} \boldsymbol{u}_{ij} \boldsymbol{u}_{ij}^T $
+					は、クラス$i$の射影行列と呼ばれる</p>
+					<fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+						<legend>射影行列を用いた部分空間法の識別規則</legend>
+						<p>全ての$j \neq i$について$\boldsymbol{x}^T \boldsymbol{P}_j \boldsymbol{x} < \boldsymbol{x}^T \boldsymbol{P}_i \boldsymbol{x}$であれば$\boldsymbol{x} \in C_i$</p>
+					</fieldset>
+					<fieldset style="border:1px solid #ffffff; padding: 10px; margin: 20px;">
+						<legend>射影行列の性質</legend>
+						<ul>
+							<li>べき等律: $\boldsymbol{P}_i^2 = \boldsymbol{P}_i$</li>
+							<li>対称行列: $\boldsymbol{P}_i^T = \boldsymbol{P}$</li>
+							<li>$rank(\boldsymbol{u}_{ij} \boldsymbol{u}_{ij}^T) = 1$</li>
+						</ul>
+					</fieldset>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(3/8)</h3>
+					<p>ベクトル$\boldsymbol{x}$の部分空間$\boldsymbol{S}_i$への正射影$\widetilde{\boldsymbol{x}}$は
+					$$ \widetilde{\boldsymbol{x}} = \sum_{j = 1}^{d_i} (\boldsymbol{x}^T \boldsymbol{u}_{ij})
+					\boldsymbol{u}_{ij} = \sum_{j = 1}^{d_i} (\boldsymbol{u}_{ij} \boldsymbol{u}_{ij}^T) \boldsymbol{x} = \boldsymbol{P}_i \boldsymbol{x} $$となり、射影行列とベクトルの積で表されるので、射影行列は部分空間と等価である</p>
+					<p>$\boldsymbol{x}$と$\boldsymbol{S}_i$への正射影$\widetilde{\boldsymbol{x}}$との差$\hat{\boldsymbol{x}} = \boldsymbol{x} - \widetilde{\boldsymbol{x}}$を残差ベクトルといい、残差ベクトルの$\boldsymbol{S}_i$への正射影は
+					$$ \boldsymbol{P}_i \hat{\boldsymbol{x}} = \boldsymbol{P}_i (\boldsymbol{x} - \widetilde{\boldsymbol{x}}) = \boldsymbol{P}_i \boldsymbol{x} - \boldsymbol{P}_i \widetilde{\boldsymbol{x}} = \boldsymbol{P}_i \boldsymbol{x} - \boldsymbol{P}_i^2 \boldsymbol{x} = 0$$
+					となり、残差ベクトルと部分空間$\boldsymbol{S}_i$は直行する</p>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(4/8)</h3>
+					<p>$\boldsymbol{x}$を部分空間$\boldsymbol{S}_i$へ正射影した長さの期待値を$|| \boldsymbol{u}_{ij} || = 1$の制約のもとで最大にするような$i$番目の部分空間の基底ベクトルは、次のラグランジュ関数を微分して$0$と置くことで求められる
+					$$ \begin{align} L_i (\boldsymbol{u}_{ij}) & = \sum_{j = 1}^{d_i} E \left\{(\boldsymbol{x}^T \boldsymbol{u}_{ij})^2 \right\} - \sum_{j = 1}^{d_i} \lambda_{ij} (\boldsymbol{u}_{ij}^T \boldsymbol{u}_{ij} - 1) \\
+					& = \sum_{j = 1}^{d_i} \boldsymbol{u}_{ij}^T E\{ \boldsymbol{x}^T \boldsymbol{x} | \boldsymbol{x} \in C_i \} \boldsymbol{u}_{ij} - \sum_{j = 1}^{d_i} \lambda_{ij} (\boldsymbol{u}_{ij}^T \boldsymbol{u}_{ij} - 1) \\
+					& = \sum_{j = 1}^{d_i} \boldsymbol{u}_{ij}^T Q_i \boldsymbol{u}_{ij} - \sum_{j = 1}^{d_i} \lambda_{ij} (\boldsymbol{u}_{ij}^T \boldsymbol{u}_{ij} - 1) \end{align} $$
+					$Q_i$はクラス$C_i$に属する学習ベクトルで構成された相関ベクトル</p>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(5/8)</h3>
+					<p>$$ \frac{\partial L_i(\boldsymbol{u}_{ij})}{\partial \boldsymbol{u}_{ij}} = 2 Q_i \boldsymbol{u}_{ij} - 2 \lambda_{ij} \boldsymbol{u}_{ij} = 0 $$
+					より、
+					$$ Q_i \boldsymbol{u}_{ij} = \lambda_{ij} \boldsymbol{u}_{ij} $$
+					のように、$i$番目のクラスの相関行列に関する固有値問題が得られる</p>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(6/8)</h3>
+					<p>$Q_i$の固有値を$\lambda_{i1} \geq \ldots \geq \lambda_{id}$とし、
+					$\lambda_{ij}$に対応する固有ベクトルを$\boldsymbol{u}_{ij}$とする</p>
+					<p>$i$番目のクラスのデータ$\boldsymbol{x}$の$j$番目の基底への射影の長さの2乗の期待値は
+					$$ \boldsymbol{u}_{ij}^T Q_i \boldsymbol{u}_{ij} = \lambda_{ij} \boldsymbol{u}_{ij}^T \boldsymbol{u}_{ij} = \lambda_{ij} $$
+					となるので$j$番目の固有値に等しい</p>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(7/8)</h3>
+					<p>$Q_i$から求めた$i$番目のクラスの固有ベクトルは正規直交基底なので、$d_i$個の基底ベクトルで
+					張られる部分空間への$\boldsymbol{x} \in C_i$の射影の長さの2乗の期待値は、
+					個々の基底への射影の和で表される
+					$$ \sum_{j = 1}^d \boldsymbol{u}_{ij}^T Q_i \boldsymbol{u}_{ij} = E\{\boldsymbol{x}^T \boldsymbol{P}_i \boldsymbol{x} | \boldsymbol{x} \in C_i \} = E\{||\boldsymbol{P}_i \boldsymbol{x}||^2 | \boldsymbol{x} \in C_i \} = \sum_{j = 1}^{d_i} \lambda_{ij} $$
+					よって、部分空間の次元$d_i$をいくつとるかによって射影される長さが異なり、次元が大きいほど長くなる</p>
+				</section>
+
+				<section>
+					<h3>CLAFIC法(8/8)</h3>
+					<p>次元の大きさで所属クラスが変わってしまうと都合が悪いので、
+					固有値の累積値$a(d_i) = \sum_{j = 1}^{d_i} \lambda_{ij}$を用いて、部分空間の次元を決める方法がある</p>
+					<p>各部分空間に共通なパラメータ$\kappa$を導入し
+					$$ a(d_i - 1) \leq \kappa < a(d_i) $$
+					を満たす$d_i$を$i$番目のクラスの部分空間の次元として採用する</p>
+					<p>この忠実度$\kappa$によって、どのクラスの部分空間でも、各クラスに属する学習データの射影長の期待値は一定に揃うことになる</p>
+				</section>
+			</div>
+		</div>
+		<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+				SVG: {
+					scale: 80
+				},
+				"HTML-CSS": {
+					scale: 80
+				}
+			});
+		</script>
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+		<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+	controls: true,
+	progress: true,
+	history: true,
+	center: true,
+	slideNumber: true,
+
+	theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+	transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+		// Parallax scrolling
+		// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+		// parallaxBackgroundSize: '2100px 900px',
+
+	math: {
+		mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+		config: 'TeX-AMS_HTML-full'
+	},
+		// Optional libraries used to extend on reveal.js
+	dependencies: [
+	{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+		{ src: '../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+			{ src: '../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+			{ src: '../plugin/math/math.js', async: true },
+	]
+});
+// Reveal.addEventListener( 'slidechanged', function( event ) {
+// 	MathJax.Hub.Rerender(event.currentSlide);
+// if (event.indexh == 4 && event.indexv == 5) {
+// 	// Reveal.configure({ center: false });
+// } else {
+// 	Reveal.configure({ center: true });
+// }
+// } );
+		</script>
+	</body>
+</html>
