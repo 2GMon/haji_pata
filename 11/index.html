@@ -1,0 +1,212 @@
+<!-- vim: foldmethod=marker
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>はじめてのパターン認識 勉強メモ</title>
+
+		<meta name="description" content="はじめてのパターン認識 11章">
+		<meta name="author" content="2GMon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.min.css">
+		<link rel="stylesheet" href="../css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="../css/2gmon.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+if( window.location.search.match( /print-pdf/gi ) ) {
+	var link = document.createElement( 'link' );
+	link.rel = 'stylesheet';
+	link.type = 'text/css';
+	link.href = '../css/print/pdf.css';
+	document.getElementsByTagName( 'head' )[0].appendChild( link );
+}
+		</script>
+
+		<!--[if lt IE 9]>
+	  <script src="../lib/js/html5shiv.js"></script>
+	  <![endif]-->
+	</head>
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h3>はじめてのパターン認識</h3>
+					<h3>11章</h3>
+					<p>
+					<small>Created by <a href="https://twitter.com/2GMon">2GMon</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h3>話の流れ</h3>
+
+					<ul>
+						<li>ノーフリーランチ定理</li>
+						<li>決定木</li>
+						<li>バギング</li>
+						<li>AdaBoost</li>
+						<li>ランダムフォレスト</li>
+					</ul>
+					<p>今回は細かい理論の話は結構端折ってますm(__)m</p>
+				</section>
+
+				<section>
+					<h3>ノーフリーランチ定理</h3>
+					<p>全ての識別問題に対して、他の識別器より識別性能が良い識別器は存在しないことを主張する定理</p>
+					<p>ある識別器が他よりも汎化性能が良いと言えるのは、特定の問題に関してのみで、対称の問題領域を指定しなければ
+					汎化性能は全て同じになる</p>
+					<p>問題領域が規定されても1つの識別器で良い性能が得られない場合は、複数の識別器を組み合わせる場合がある</p>
+				</section>
+
+				<section>
+					<h3>決定木(1/3)</h3>
+					<p>単純な識別規則を組み合わせて複雑な識別境界を得る方法</p>
+					<p>特徴軸ごとに識別規則に基づいて判断することで識別が可能になる</p>
+					<p>識別の仮定は決定木として表現ができる</p>
+					<p>根ノードと内部ノードを合わせた非終端ノードで識別を行って次のノードを辿っていき、到達した終端ノード
+					によって属するクラスが決められる</p>
+				</section>
+
+				<section>
+					<h3>決定木(2/3)</h3>
+					<p>決定木を構成する方法にはボトムアップ型とトップダウン型がある</p>
+					<p>現在はトップダウン型が主流</p>
+					<ul>
+						<li>ボトムアップ型
+							<ul>
+								<li>ある1つの学習データを正しく識別できる特徴の集合を探して特殊な識別規則を作り、特徴に対する制約を緩めながら
+								他の学習データも正しく識別できるように規則を一般化していく</li>
+							</ul>
+						</li>
+						<li>トップダウン型
+							<ul>
+								<li>根ノードで全ての学習データをできるだけ誤りの少ないように分けられる特徴を探して特徴空間を2分割し、
+									分けられた学習データを誤りが少ないように分けられる特徴を探して2分割することを繰り返す</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>決定木(3/3)</h3>
+					<p>トップダウン型で決定木を構成するには以下について考える必要がある</p>
+					<ul>
+						<li>各ノードにおいて特徴空間分割規則を構成するための特徴軸と閾値の選択</li>
+						<li>1つの終端ノードに1つの学習データが含まれるまで分割を繰り返すのか、複数のクラスのデータが含まれていてもよいのかなど</li>
+						<li>終端ノードに対する多数決によるクラスの割当</li>
+					</ul><br /><br />
+					<p>代表的な手法にはCARTとID3や後継のC4.5と呼ばれるものがある</p>
+					<p>CARTは2分木しか認めていないが、C4.5は多分木による分割を認めている</p>
+				</section>
+
+				<section>
+					<h3>バギング</h3>
+					<p>学習データのブートストラップサンプルを用いて複数の識別器を学習させ、新しい入力データのクラスはそれらの識別器の多数決で決める方法</p>
+					<p>個々の識別器の性能はランダム識別器よりも少し良ければいいので、弱識別器とよばれる</p>
+					<p>決定木は学習データの少しの変化で識別器の性能が大きく変化してしまうので不安定な識別器だが、複数の決定木からの結果の多数決を取ることで
+					1つの決定木よりも安定で性能の良い識別器を構成できる</p>
+					<p>ブートストラップサンプルによる学習なので、個々の識別器の学習は独立に並列に実行できる</p>
+					<p>ブートストラップサンプルのデータが偏った場合、決定木間の性能が似通ってしまい、十分に性能強化できない場合がある</p>
+				</section>
+
+				<section>
+					<h3>AdaBoost(1/2)</h3>
+					<p>複数の弱識別器を用意して、学習を直列的にし、前の弱識別器の学習結果を参考にしながら1つずつ弱識別器を学習する</p>
+					<p>弱識別器の学習データはそれまでの学習結果から、次の学習にとってもっとも有益なものが選ばれる</p>
+					<p>各弱識別器は学習データに対する誤り率が $\epsilon \leq 1/2 - \gamma \;\; (\gamma > 0)$ をみたすように学習される</p>
+				</section>
+
+				<section>
+					<h3>AdaBoost(2/2)</h3>
+					<p>弱識別器の学習結果に従って、誤った学習データに対する重みを大きくし、正しく識別された学習データに対する重みを小さくすることで
+					後に学習する識別器ほど、誤りの多い学習データに集中して学習するようにする</p>
+					<p>AdaBoostは2クラス問題の識別器で、多クラス問題に対応するためには$K-1$個の1対多識別器を構成する必要がある</p>
+					<p>弱識別器の数が大きいと過学習が生じるので、交差検定などで選ぶ必要がある</p>
+				</section>
+
+				<section>
+					<h3>ランダムフォレスト(1/2)</h3>
+					<p>バギングは、ブートストラップサンプルの偏りによって、生成された決定木の相関が高くなる</p>
+					<p>一般に、分散$\sigma^2$をもつ$M$個の独立な確率変数$X_i$の平均 $\bar{X} = 1/M \sum_{ i = 1 }^{ M } X_i $ の分散は
+					$Var\{ \bar{X} \} = \sigma^2 / M $ となるが、任意の2つの確率変数間に正の相関$\rho$がある場合には、平均の分散は
+					$$ Var\{\bar{X}\} = \frac{ 1 - \rho }{ M } \sigma^2 + \rho \sigma^2 $$
+					となる</p>
+					<p>ブートストラップサンプル数の$M$を増やせば第1項は減るが、第2項は減らない</p>
+					<p>ランダムフォレストは$\rho$を減らす仕組みを入れてバギングを強化した手法</p>
+				</section>
+
+				<section>
+					<h3>ランダムフォレスト(2/2)</h3>
+					<p>決定木の各非終端ノードにおいて識別に用いる特徴をあらかじめ決められた数だけランダムに選択することで、
+					相関の低い多様な決定木を生成できるようにした手法</p>
+					<p>ランダムフォレストは多数決によって多クラス問題に自然に拡張できる</p>
+				</section>
+			</div>
+		</div>
+		<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+				SVG: {
+					scale: 80
+				},
+				"HTML-CSS": {
+					scale: 80
+				}
+			});
+		</script>
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+		<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+	controls: true,
+	progress: true,
+	history: true,
+	center: true,
+	slideNumber: true,
+
+	theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+	transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+		// Parallax scrolling
+		// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+		// parallaxBackgroundSize: '2100px 900px',
+
+	math: {
+		mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+		config: 'TeX-AMS_HTML-full'
+	},
+		// Optional libraries used to extend on reveal.js
+	dependencies: [
+	{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+		{ src: '../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+			{ src: '../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+			{ src: '../plugin/math/math.js', async: true },
+	]
+});
+// Reveal.addEventListener( 'slidechanged', function( event ) {
+// 	MathJax.Hub.Rerender(event.currentSlide);
+// if (event.indexh == 4 && event.indexv == 5) {
+// 	// Reveal.configure({ center: false });
+// } else {
+// 	Reveal.configure({ center: true });
+// }
+// } );
+		</script>
+	</body>
+</html>
